@@ -8,9 +8,12 @@ Created for **CS4460: Information Visualization, FA16**, *Final Project*
 `$ npm run startd`
 
 ## Project Setup Information
-+ All JS files goes to `/src` folder
-+ All static files (e.g. css, html, image) goes to `/public` folder
++ All JS files go to `/src` folder
++ All static files (e.g. css, html, image) go to `/public` folder
 + The project is setup to fully support CommonJS and ES6 syntax
++ Libraries installed:
+    - D3.js v4.2.5
+    - TopoJSON v1.6.27
 
 ## Notes
 + This project requires `npm` to build and run, to install `npm` please install <a href="https://nodejs.org/en/">`node.js`</a>
