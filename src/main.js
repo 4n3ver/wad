@@ -10,4 +10,12 @@ import WorldMap from "./map";
 
 d3.select("#main").text("Hello, World!");
 
+d3.csv("data/disaster_data.csv")
+  .row(rawData => {
+
+  })
+  .get(parsedData => {
+      console.log(parsedData);
+  });
+
 const map = new WorldMap();
