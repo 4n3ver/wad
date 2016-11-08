@@ -37,6 +37,7 @@ class WorldMap {
      * opts.target should be CSS selector
      * any number is in px
      *
+     * @param {any!} worldVector data describing the map to be drawn
      * @param {{
      *  target: string
      *  width : number,
@@ -49,7 +50,7 @@ class WorldMap {
      *  }
      * }=} opts user specified options
      */
-    constructor(opts) {
+    constructor(worldVector, opts) {
         this._setOptions(opts);
 
         const projection = d3.geoMercator()
@@ -97,28 +98,26 @@ class WorldMap {
          .attr("class", "equator")
          .attr("d", path);
 
-        d3.json("/data/world-topo-min.json", (err, world) => {
-            const countriesFeature = topojson.feature(
-                world,
-                world.objects.countries
-            ).features;
+        const countriesFeature = topojson.feature(
+            worldVector,
+            worldVector.objects.countries
+        ).features;
 
-            this._countries = g.selectAll(".countries").data(countriesFeature)
-                               .enter().insert("path");
+        this._countries = g.selectAll(".countries").data(countriesFeature)
+                           .enter().insert("path");
 
-            this._countries.attr("class", "countries")
-                .attr("d", path)
-                .attr("id", (d, i) => d.id)
-                .attr("title", d => d.properties.name);
+        this._countries.attr("class", "countries")
+            .attr("d", path)
+            .attr("id", d => d.id)
+            .attr("title", d => d.properties.name);
 
-            g.append("path")
-             .datum(topojson.mesh(world, world.objects.countries,
-                                  (a, b) => a !== b))
-             .attr("class", "boundary")
-             .attr("d", path);
+        g.append("path")
+         .datum(topojson.mesh(worldVector, worldVector.objects.countries,
+                              (a, b) => a !== b))
+         .attr("class", "boundary")
+         .attr("d", path);
 
-            Object.freeze(this);    // prevent this object to be modified
-        });
+        Object.freeze(this);    // prevent this object to be modified
     }
 
     /**
