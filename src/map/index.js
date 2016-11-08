@@ -5,9 +5,24 @@ import * as d3 from "d3";
 import * as topojson from "topojson";
 import { merge } from "lodash";
 
+/**
+ * This callback type is called `eachDataCallBack` and will be called for
+ * each country
+ *
+ * @callback eachDataCallBack
+ * @param {{
+ *  id: number,
+ *  properties: {
+ *      name    : string,
+ *      color   : string
+ *  }
+ * }} data data bound to a country
+ */
+
 const defaultOptions = {
+    target: d3.select("body"),
     width : 960,
-    height: 540,
+    height: 960,
     margin: {
         top   : 30,
         right : 30,
@@ -17,24 +32,58 @@ const defaultOptions = {
 };
 
 class WorldMap {
+    /**
+     * Draw a world map.
+     * opts.target should be CSS selector
+     * any number is in px
+     *
+     * @param {{
+     *  target: string
+     *  width : number,
+     *  height: number,
+     *  margin: {
+     *      top   : number,
+     *      right : number,
+     *      bottom: number,
+     *      left  : number
+     *  }
+     * }=} opts user specified options
+     */
     constructor(opts) {
-        this.__setOptions(opts);
+        this._setOptions(opts);
+
         const projection = d3.geoMercator()
                              .scale((this.width + 1) / 2 / Math.PI)
                              .translate([this.width / 2, this.height / 2])
                              .precision(.1);
+
         const path = d3.geoPath().projection(projection);
+
         const graticule = d3.geoGraticule();
-        const svg = d3.select("body").append("svg")
-                      .attr("width", this.width + this.margin.left
-                            + this.margin.right)
-                      .attr("height", this.height + this.margin.top
-                            + this.margin.bottom);
-        svg.append("path").datum(graticule).attr("class", "graticule")
+
+        // TODO: no idea what this two line does, so commented out
+        //d3.select(self.frameElement)
+        //  .style("height", `${this.height * 2.3 / 3}px`);
+
+        const svg = this.target.append("div")
+                        .style("padding", "0")
+                        .style("margin",
+                               `${this.margin.top}px ${this.margin.right}px ${this.margin.bottom}px ${this.margin.left}px`)
+                        .style("display", "inline-block")
+                        .append("svg")
+                        .attr("width", this.width)
+                        .attr("height", this.height * 2.2 / 3);
+
+        svg.append("path").datum(graticule)
+           .attr("class", "graticule")
            .attr("d", path);
-        svg.append("path").datum(graticule).attr("class", "choropleth")
+
+        svg.append("path").datum(graticule)
+           .attr("class", "choropleth")
            .attr("d", path);
+
         const g = svg.append("g");
+
         g.append("path")
          .datum(
              {
@@ -47,24 +96,73 @@ class WorldMap {
          )
          .attr("class", "equator")
          .attr("d", path);
+
         d3.json("/data/world-topo-min.json", (err, world) => {
-            const countries = topojson.feature(
+            const countriesFeature = topojson.feature(
                 world,
                 world.objects.countries
             ).features;
-            const country = g.selectAll(".country").data(countries);
-            country.enter().insert("path")
-                   .attr("class", "country")
-                   .attr("d", path)
-                   .attr("id", (d, i) => d.id)
-                   .attr("title", d => d.properties.name);
+
+            this._countries = g.selectAll(".countries").data(countriesFeature)
+                               .enter().insert("path");
+
+            this._countries.attr("class", "countries")
+                .attr("d", path)
+                .attr("id", (d, i) => d.id)
+                .attr("title", d => d.properties.name);
+
+            g.append("path")
+             .datum(topojson.mesh(world, world.objects.countries,
+                                  (a, b) => a !== b))
+             .attr("class", "boundary")
+             .attr("d", path);
+
+            Object.freeze(this);    // prevent this object to be modified
         });
     }
 
-    __setOptions(opts) {
+    /**
+     * Helper function to merge default options and user specified options
+     *
+     * @param {{
+     *  target: string
+     *  width : number,
+     *  height: number,
+     *  margin: {
+     *      top   : number,
+     *      right : number,
+     *      bottom: number,
+     *      left  : number
+     *  }
+     * }=} opts user specified options
+     * @private
+     */
+    _setOptions(opts) {
         merge(this, defaultOptions, opts);
         this.height -= this.margin.top + this.margin.bottom;
         this.width -= this.margin.left + this.margin.right;
+    }
+
+    /**
+     * Set an event listener for each country on the map for the specified type
+     * of event.
+     *
+     * @param {string} event
+     * @param {eachDataCallBack} cb
+     */
+    on(event, cb) {
+        this._countries.on(event, cb);
+    }
+
+    /**
+     * Change the style of each country into the return value of the specified
+     * callback.
+     *
+     * @param {string} key name of the style to modify
+     * @param {eachDataCallBack} cb new value for the specified style
+     */
+    style(key, cb) {
+        this._countries.transition().style(key, cb);
     }
 }
 
