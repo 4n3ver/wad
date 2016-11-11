@@ -111,11 +111,11 @@ class WorldMap {
             .attr("id", d => d.id)
             .attr("title", d => d.properties.name);
 
-        g.append("path")
-         .datum(topojson.mesh(worldVector, worldVector.objects.countries,
-                              (a, b) => a !== b))
-         .attr("class", "boundary")
-         .attr("d", path);
+        //g.append("path")
+        // .datum(topojson.mesh(worldVector, worldVector.objects.countries,
+        //                      (a, b) => a !== b))
+        // .attr("class", "boundary")
+        // .attr("d", path);
 
         Object.freeze(this);    // prevent this object to be modified
     }

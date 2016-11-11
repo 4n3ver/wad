@@ -13,10 +13,10 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
     d3.csv("data/disaster_data.csv")
       .get(parsedData => {
           parsedData = processData(parsedData);
-          // console.log(parsedData);	  
+          // console.log(parsedData);
           const map = new WorldMap(worldVector);
           map.on("mousemove", d => console.log(d.properties.name));
-          map.style("fill", d => "#ccc");
+          map.style("fill", d => "#000");
       });
 });
 
@@ -33,11 +33,11 @@ function processData(rawData) {
         if (parseInt(row["Country Name"][key]) + "" != "NaN") {
           jsonObject[row["Country Name"]].disaster[row["Year"]][row["Disaster Type"]][key] = parseInt(row[key]);
         } else {
-          jsonObject[row["Country Name"]].disaster[row["Year"]][row["Disaster Type"]][key] = row[key]; 
+          jsonObject[row["Country Name"]].disaster[row["Year"]][row["Disaster Type"]][key] = row[key];
         }
       }
     });
   });
-  console.log(JSON.stringify(jsonObject));
+  //console.log(JSON.stringify(jsonObject));
   return jsonObject;
 }
