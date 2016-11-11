@@ -15,7 +15,43 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
           parsedData = processData(parsedData);
           // console.log(parsedData);
           const map = new WorldMap(worldVector);
-          map.on("mousemove", d => console.log(d.properties.name));
+          map.on("mousemove", function(d) {
+            var html = "";
+
+            html += "<div class=\"tooltip_kv\">";
+            html += "<span class=\"tooltip_key\">";
+            html += d.properties.name;
+            html += "</span>";
+            html += "<span class=\"tooltip_value\">";
+            //html += (valueHash[d.properties.name] ? valueFormat(valueHash[d.properties.name]) : "");
+            html += "";
+            html += "</span>";
+            html += "</div>";
+
+            d3.select("#tooltip-container").html(html).style("opacity",1);
+            d3.select(this).attr("fill-opacity", 0.75);
+
+            d3.select("#tooltip-container")
+                .style("top", (d3.event.y + 15) + "px")
+                .style("left", (d3.event.x + 15) + "px")
+                .style("display", "block");
+
+            var coord = d3.mouse(this);
+            // if (d3.event.pageX < map_width / 2) {
+            //   d3.select("#tooltip-container")
+            //     .style("top", (d3.event.layerY + 15) + "px")
+            //     .style("left", (d3.event.layerX + 15) + "px");
+            // } else {
+            //   var tooltip_width = d3.select("#tooltip-container").width();
+            //   d3.select("#tooltip-container")
+            //     .style("top", (d3.event.layerY + 15) + "px")
+            //     .style("left", (d3.event.layerX - tooltip_width - 30) + "px");
+            // }
+          });
+          map.on("mouseout", function(d) {
+            d3.select(this).attr("fill-opacity", 1);
+            d3.select("#tooltip-container").style("display", "none");
+          });
           map.style("fill", d => "#000");
       });
 });

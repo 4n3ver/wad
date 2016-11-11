@@ -1,1 +1,15 @@
-
+#tooltip-container {
+  position: absolute;
+  background-color: #fff;
+  color: #333;
+  padding: 10px;
+  border: 1px solid;
+  display: none;
+}
+.tooltip_key {
+  font-weight: bold;
+}
+.tooltip_value {
+  margin-left: 20px;
+  float: right;
+}
