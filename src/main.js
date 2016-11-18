@@ -13,18 +13,32 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
     d3.csv("data/disaster_data.csv")
       .get(parsedData => {
           parsedData = processData(parsedData);
-          // console.log(parsedData);
+          console.log(parsedData["Indonesia"]);
           const map = new WorldMap(worldVector);
+          function getTotalDeaths(d, z){
+            var years = Object.keys(parsedData[d].disaster);
+            console.log(years)
+            var total = 0;
+            years.forEach(e => {
+              var disasters = Object.keys(parsedData[d].disaster[e]);
+              disasters.forEach(f => {
+                var value = parseInt(parsedData[d].disaster[e][f][z]);
+                if (!isNaN(value)) {total += value;}
+              })
+            })
+            return total;
+          }
+
+
           map.on("mousemove", function(d) {
             var html = "";
-
-            html += "<div class=\"tooltip_kv\">";
-            html += "<span class=\"tooltip_key\">";
+            html += "<div class=\"tooltip_key\">";
             html += d.properties.name;
-            html += "</span>";
+            html += "</div>";
+            html += "<span class=\"tooltip_key\">";
+            html += "Total Deaths: ";
             html += "<span class=\"tooltip_value\">";
-            //html += (valueHash[d.properties.name] ? valueFormat(valueHash[d.properties.name]) : "");
-            html += "";
+            html += (parsedData[d.properties.name] != null ? getTotalDeaths(d.properties.name, "Total deaths") : 0);
             html += "</span>";
             html += "</div>";
 
@@ -74,6 +88,6 @@ function processData(rawData) {
       }
     });
   });
-  //console.log(JSON.stringify(jsonObject));
+  // console.log(JSON.stringify(jsonObject));
   return jsonObject;
 }

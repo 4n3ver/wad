@@ -11,5 +11,6 @@
 }
 .tooltip_value {
   margin-left: 20px;
+  font-weight: normal;
   float: right;
 }
