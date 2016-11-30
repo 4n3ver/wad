@@ -21,6 +21,9 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
             filteredData = filterByTime(parsedData, parseInt(values[0]), parseInt(values[1]));
           })
 
+          var test = colorRatio(filteredData);
+          console.log(test);
+
           const map = new WorldMap(worldVector);
           const bar = new BarChart([1,2,3], {x: d=>d, y: d=>d});
 
@@ -113,6 +116,11 @@ function processData(rawData) {
     return jsonObject;
 }
 
+/**
+ * Initialize time slider.
+ *
+ * @returns {object!} time slider
+ */
 function initSlider() {
   d3.select("#main").append("div").attr("id", "slider").style("margin", "20px 100px");
   var slider = document.getElementById('slider');
@@ -194,4 +202,28 @@ function valueFormat(d) {
     } else {
       return d;
     }
+}
+
+function colorRatio(data) {
+  return mapValues (data, value => {
+    Object.keys(value.disaster).forEach(disasterYear => {
+      value.ratio = value.ratio || {};
+      var totalDeathPerYear = valuesOf(value.disaster[disasterYear])
+        .reduce((accumulator, disasterDataPerYear) => {
+            var toAdd;
+            if (parseInt(disasterDataPerYear["Total deaths"]) + "" != "NaN") {
+              toAdd = parseInt(disasterDataPerYear["Total deaths"]);
+            } else {
+              toAdd = 0;
+            }
+             return accumulator + toAdd;
+          }, 0);
+      value.ratio[disasterYear] = totalDeathPerYear / value.population[disasterYear];
+    });
+    return value;
+  });
+}
+
+function valuesOf(obj) {
+  return Object.keys(obj).map(k => obj[k]);
 }
