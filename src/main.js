@@ -13,9 +13,13 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
     d3.csv("data/disaster_data.csv")
       .get(parsedData => {
           parsedData = processData(parsedData);
-          const filteredData = filterByTime(parsedData, 2000, 2015);
-          console.log(filteredData);
-          console.log(parsedData["Indonesia"]);
+          let filteredData = parsedData;
+          const slider = initSlider();
+          slider.noUiSlider.on('update', function (values, handle) {
+            console.log(values, filteredData);
+            filteredData = filterByTime(parsedData, parseInt(values[0]), parseInt(values[1]));
+          })
+          
           const map = new WorldMap(worldVector);
 
           function getTotalDeaths(d, z) {
@@ -107,6 +111,28 @@ function processData(rawData) {
     return jsonObject;
 }
 
+function initSlider() {
+  d3.select("#main").append("div").attr("id", "slider").style("margin", "20px 100px");
+  var slider = document.getElementById('slider');
+
+  noUiSlider.create(slider, { 
+    start: [1960, 2015],
+    step: 1,
+    connect: true,
+    range: {
+      'min': 1960,
+      'max': 2015
+    },
+    pips: {
+      mode: 'count',
+      density: 2,
+      values: 11,
+      stepped: true
+    }
+  });
+  return slider;
+}
+
 /**
  * Filter data to only include data from given range of year.
  * This function is immutable (does not modify the original object).
@@ -117,6 +143,7 @@ function processData(rawData) {
  * @returns {object!} new data with population and disaster filtered by year
  */
 function filterByTime(data, start, end) {
+    console.log(start, end);
     return mapValues(
         data, v =>
             mapValues(v, (v, k) => {

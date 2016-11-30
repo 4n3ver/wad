@@ -14,3 +14,7 @@
   font-weight: normal;
   float: right;
 }
+
+div.noUi-connect {
+  background: #78909C;
+}
