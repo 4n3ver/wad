@@ -8,6 +8,7 @@ require.context("../public/", true,
 import * as d3 from "d3";
 import { pickBy, mapValues } from "lodash";
 import WorldMap from "./map";
+import BarChart from "./bar";
 
 d3.json("/data/world-topo-min.json", (err, worldVector) => {
     d3.csv("data/disaster_data.csv")
@@ -21,6 +22,7 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
           })
 
           const map = new WorldMap(worldVector);
+          const bar = new BarChart([1,2,3], {x: d=>d, y: d=>d});
 
           function getTotalDeaths(d, z) {
               var years = Object.keys(parsedData[d].disaster);

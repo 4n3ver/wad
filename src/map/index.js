@@ -1,4 +1,9 @@
-/* @flow */
+/**
+ * @author Yoel Ivan (yivan3@gatech.edu)
+ * @version 0.0a
+ * @flow
+ */
+
 "use strict";
 
 import * as d3 from "d3";
@@ -62,10 +67,6 @@ class WorldMap {
 
         const graticule = d3.geoGraticule();
 
-        // TODO: no idea what this two line does, so commented out
-        //d3.select(self.frameElement)
-        //  .style("height", `${this.height * 2.3 / 3}px`);
-
         const svg = this.target.append("div")
                         .style("padding", "0")
                         .style("margin",
@@ -110,12 +111,6 @@ class WorldMap {
             .attr("d", path)
             .attr("id", d => d.id)
             .attr("title", d => d.properties.name);
-
-        //g.append("path")
-        // .datum(topojson.mesh(worldVector, worldVector.objects.countries,
-        //                      (a, b) => a !== b))
-        // .attr("class", "boundary")
-        // .attr("d", path);
 
         Object.freeze(this);    // prevent this object to be modified
     }
