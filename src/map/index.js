@@ -87,13 +87,13 @@ class WorldMap {
 
         g.append("path")
          .datum(
-             {
-                 type       : "LineString",
-                 coordinates: [
-                     [-180, 0], [-90, 0], [0, 0],
-                     [90, 0], [180, 0]
-                 ]
-             }
+            {
+                type       : "LineString",
+                coordinates: [
+                    [-180, 0], [-90, 0], [0, 0],
+                    [90, 0], [180, 0]
+                ]
+            }
          )
          .attr("class", "equator")
          .attr("d", path);
