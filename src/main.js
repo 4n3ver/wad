@@ -42,7 +42,7 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
               these.style("opacity", 1);
               this.style("opacity", .85);
           });
-          bar.updateGraph([1,2]);
+          bar.updateGraph([1, 2]);
 
           map.on("mousemove", function (d) {
               var html = "";
@@ -54,21 +54,24 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
               html += "Total Deaths: ";
               // Total deaths
               html += "<span class=\"tooltip_value\">";
-              html += (parsedData[d.properties.name] != null ? get(filteredData,
+              html += (parsedData[d.properties.name] != null ? get(
+                  filteredData,
                   d.properties.name, "Total deaths") : 0);
               html += "</span><br>";
               // Total damage
               html += "<span class=\"tooltip_key\">";
               html += "Total Damage: ";
               html += "<span class=\"tooltip_value\">";
-              html += (parsedData[d.properties.name] != null ? "$" + valueFormat(get(filteredData,
-                  d.properties.name, "Total damage")) : 0);
+              html += (parsedData[d.properties.name] != null ? "$"
+              + valueFormat(get(filteredData,
+                                d.properties.name, "Total damage")) : 0);
               html += "</span><br>";
               // Total affected
               html += "<span class=\"tooltip_key\">";
               html += "Total Affected: ";
               html += "<span class=\"tooltip_value\">";
-              html += (parsedData[d.properties.name] != null ? get(filteredData,
+              html += (parsedData[d.properties.name] != null ? get(
+                  filteredData,
                   d.properties.name, "Total affected") : 0);
               html += "</span>";
               html += "</div>";
@@ -162,13 +165,17 @@ function initSlider() {
 }
 
 function initDropDown() {
-  var dropdown = d3.select("#main")
-    .append("div").attr("class", "ui fluid input")
-    .append("select").attr("class","ui compact selection dropdown");
-  
-  dropdown.append("option").attr("value", "Total damage").text("Total Damage ($)");
-  dropdown.append("option").attr("value", "Total deaths").text("Total Death");
-  dropdown.append("option").attr("value", "Total affected").text("Number of People Affected")
+    var dropdown = d3.select("#main")
+                     .append("div").attr("class", "ui fluid input")
+                     .append("select")
+                     .attr("class", "ui compact selection dropdown");
+
+    dropdown.append("option").attr("value", "Total damage")
+            .text("Total Damage ($)");
+    dropdown.append("option").attr("value", "Total deaths")
+            .text("Total Death");
+    dropdown.append("option").attr("value", "Total affected")
+            .text("Number of People Affected")
 }
 
 /**
@@ -201,7 +208,8 @@ function filterByTime(data, start, end) {
  *
  * @param {object!} data        data to be calculated
  * @param {string!} countryName name of the country
- * @param {string!} category    one of three categories: total deaths, total damage, number of affected
+ * @param {string!} category    one of three categories: total deaths, total
+ *     damage, number of affected
  * @returns {number!} total data for a category for a country.
  */
 function get(data, countryName, category) {
@@ -222,77 +230,84 @@ function get(data, countryName, category) {
 
 function valueFormat(d) {
     if (d > 1000000000) {
-      return Math.round(d / 1000000000 * 10) / 10 + "B";
+        return Math.round(d / 1000000000 * 10) / 10 + "B";
     } else if (d > 1000000) {
-      return Math.round(d / 1000000 * 10) / 10 + "M";
+        return Math.round(d / 1000000 * 10) / 10 + "M";
     } else if (d > 1000) {
-      return Math.round(d / 1000 * 10) / 10 + "K";
+        return Math.round(d / 1000 * 10) / 10 + "K";
     } else {
-      return d;
+        return d;
     }
 }
 
 /**
- * Calculate the ratio of total death and population per year to determine the hue of the map.
- * 
+ * Calculate the ratio of total death and population per year to determine the
+ * hue of the map.
+ *
  * @param {object!} data        data to be calculated
  * @returns {object!} ratio of the total death and population per year
  */
 function colorRatio(data) {
-  return mapValues (data, value => {
-    Object.keys(value.disaster).forEach(disasterYear => {
-      value.ratio = value.ratio || {};
-      var totalDeathPerYear = valuesOf(value.disaster[disasterYear])
-        .reduce((accumulator, disasterDataPerYear) => {
-            var toAdd;
-            if (parseInt(disasterDataPerYear["Total deaths"]) + "" != "NaN") {
-              toAdd = parseInt(disasterDataPerYear["Total deaths"]);
-            } else {
-              toAdd = 0;
-            }
-             return accumulator + toAdd;
-          }, 0);
-      value.ratio[disasterYear] = totalDeathPerYear / value.population[disasterYear];
+    return mapValues(data, value => {
+        Object.keys(value.disaster).forEach(disasterYear => {
+            value.ratio = value.ratio || {};
+            var totalDeathPerYear = valuesOf(value.disaster[disasterYear])
+                .reduce((accumulator, disasterDataPerYear) => {
+                    var toAdd;
+                    if (parseInt(disasterDataPerYear["Total deaths"]) + ""
+                        != "NaN") {
+                        toAdd = parseInt(disasterDataPerYear["Total deaths"]);
+                    } else {
+                        toAdd = 0;
+                    }
+                    return accumulator + toAdd;
+                }, 0);
+            value.ratio[disasterYear] = totalDeathPerYear
+                / value.population[disasterYear];
+        });
+        return value;
     });
-    return value;
-  });
 }
 
 function valuesOf(obj) {
-  return Object.keys(obj).map(k => obj[k]);
+    return Object.keys(obj).map(k => obj[k]);
 }
 
+///////////////////////////////////////////////
+function selectRed(min, max, value) {
+    return (value - min) / (max - min) * 255;
+}
 /**
  * Calculate the average ratio per country
- * 
+ *
  * @param {object!} data        data to be calculated
  * @param {object!} start       start year of the data that will be calculated
  * @param {object!} end         end year of the data that will be calculated
  * @returns {object!} the average of ratio per country
  */
 function averageRatioPerCountry(data, start, end) {
-  return mapValues(data, value => {
-    value.averageRatio = 0;
-    if (value.ratio) {
-      Object.keys(value.ratio).forEach(ratioYear => {
-        value.averageRatio += value.ratio[ratioYear]
-      });
-      value.averageRatio = value.averageRatio/(end - start);
-    }
-    return value;
-  });
+    return mapValues(data, value => {
+        value.averageRatio = 0;
+        if (value.ratio) {
+            Object.keys(value.ratio).forEach(ratioYear => {
+                value.averageRatio += value.ratio[ratioYear]
+            });
+            value.averageRatio = value.averageRatio / (end - start);
+        }
+        return value;
+    });
 }
 
 /**
  * Find the maximum ratio for all country
- * 
+ *
  * @param {object!} data        data to be calculated
  * @returns {number!} the maximum ratio for all country
  */
 function maxRatio(data) {
-  var max = 0;
-  valuesOf(data).forEach(country => {
-    max = Math.max(max, country.averageRatio);
-  });
-  return max;
+    var max = 0;
+    valuesOf(data).forEach(country => {
+        max = Math.max(max, country.averageRatio);
+    });
+    return max;
 }

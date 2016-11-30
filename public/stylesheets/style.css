@@ -1,3 +1,7 @@
+body {
+  background: #eceff1;
+}
+
 #tooltip-container {
   position: absolute;
   background-color: #fff;
