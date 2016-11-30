@@ -161,7 +161,9 @@ class WorldMap {
      * @param {eachDataCallBack} cb new value for the specified style
      */
     style(key, cb) {
-        this._countries.transition().style(key, cb);
+        // prevent transition to be interrupted half-way through
+        const uniqueID = `${Math.random()}`;
+        this._countries.transition(uniqueID).style(key, cb);
     }
 }
 
