@@ -13,6 +13,8 @@ import BarChart from "./bar";
 d3.json("/data/world-topo-min.json", (err, worldVector) => {
     d3.csv("data/disaster_data.csv")
       .get(parsedData => {
+          initDropDown();
+
           parsedData = processData(parsedData);
           let filteredData = parsedData;
           const slider = initSlider();
@@ -157,6 +159,16 @@ function initSlider() {
         }
     });
     return slider;
+}
+
+function initDropDown() {
+  var dropdown = d3.select("#main")
+    .append("div").attr("class", "ui fluid input")
+    .append("select").attr("class","ui compact selection dropdown");
+  
+  dropdown.append("option").attr("value", "Total damage").text("Total Damage ($)");
+  dropdown.append("option").attr("value", "Total deaths").text("Total Death");
+  dropdown.append("option").attr("value", "Total affected").text("Number of People Affected")
 }
 
 /**
