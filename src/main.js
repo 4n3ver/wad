@@ -24,32 +24,32 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
           const map = new WorldMap(worldVector);
           const bar = new BarChart([1,2,3], {x: d=>d, y: d=>d});
 
-          function getTotalDeaths(d, z) {
-              var years = Object.keys(parsedData[d].disaster);
-              console.log(years)
-              var total = 0;
-              years.forEach(e => {
-                  var disasters = Object.keys(parsedData[d].disaster[e]);
-                  disasters.forEach(f => {
-                      var value = parseInt(parsedData[d].disaster[e][f][z]);
-                      if (!isNaN(value)) {
-                          total += value;
-                      }
-                  })
-              })
-              return total;
-          }
-
           map.on("mousemove", function (d) {
               var html = "";
+              // Country name
               html += "<div class=\"tooltip_key\">";
               html += d.properties.name;
               html += "</div>";
               html += "<span class=\"tooltip_key\">";
               html += "Total Deaths: ";
+              // Total deaths
               html += "<span class=\"tooltip_value\">";
-              html += (parsedData[d.properties.name] != null ? getTotalDeaths(
+              html += (parsedData[d.properties.name] != null ? get(filteredData,
                   d.properties.name, "Total deaths") : 0);
+              html += "</span><br>";
+              // Total damage
+              html += "<span class=\"tooltip_key\">";
+              html += "Total Damage: ";
+              html += "<span class=\"tooltip_value\">";
+              html += (parsedData[d.properties.name] != null ? "$" + valueFormat(get(filteredData,
+                  d.properties.name, "Total damage")) : 0);
+              html += "</span><br>";
+              // Total affected
+              html += "<span class=\"tooltip_key\">";
+              html += "Total Affected: ";
+              html += "<span class=\"tooltip_value\">";
+              html += (parsedData[d.properties.name] != null ? get(filteredData,
+                  d.properties.name, "Total affected") : 0);
               html += "</span>";
               html += "</div>";
 
@@ -157,4 +157,41 @@ function filterByTime(data, start, end) {
                 }
             })
     );
+}
+
+/**
+ * Calculate total data for a category for a country.
+ * This function is immutable (does not modify the original object).
+ *
+ * @param {object!} data        data to be calculated
+ * @param {string!} countryName name of the country
+ * @param {string!} category    one of three categories: total deaths, total damage, number of affected
+ * @returns {number!} total data for a category for a country.
+ */
+function get(data, countryName, category) {
+    var years = Object.keys(data[countryName].disaster);
+    console.log(years)
+    var total = 0;
+    years.forEach(e => {
+        var disasters = Object.keys(data[countryName].disaster[e]);
+        disasters.forEach(f => {
+            var value = parseInt(data[countryName].disaster[e][f][category]);
+            if (!isNaN(value)) {
+                total += value;
+            }
+        })
+    })
+    return total;
+}
+
+function valueFormat(d) {
+    if (d > 1000000000) {
+      return Math.round(d / 1000000000 * 10) / 10 + "B";
+    } else if (d > 1000000) {
+      return Math.round(d / 1000000 * 10) / 10 + "M";
+    } else if (d > 1000) {
+      return Math.round(d / 1000 * 10) / 10 + "K";
+    } else {
+      return d;
+    }
 }
