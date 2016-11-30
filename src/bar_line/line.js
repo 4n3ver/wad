@@ -30,7 +30,7 @@ var valueline = d3.svg.line()
 
 var maxY;
 
-d3.csv("disaster_data.csv", function(error, data) {
+d3.csv("data/disaster_data.csv", function(error, data) {
     data.forEach(function(d) {
         d.country = d["Country Name"]
         d.year = parseDate(d.year)
