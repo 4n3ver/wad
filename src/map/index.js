@@ -12,7 +12,7 @@ import { merge } from "lodash";
 
 /**
  * This callback type is called `eachDataCallBack` and will be called for
- * each country
+ * each bar
  *
  * @callback eachDataCallBack
  * @param {{
@@ -21,7 +21,7 @@ import { merge } from "lodash";
  *      name    : string,
  *      color   : string
  *  }
- * }} data data bound to a country
+ * }} data  data bound to a country
  */
 
 const defaultOptions = {
@@ -54,6 +54,7 @@ class WorldMap {
      *      left  : number
      *  }
      * }=} opts user specified options
+     * @constructor
      */
     constructor(worldVector, opts) {
         this._setOptions(opts);

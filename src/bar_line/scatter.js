@@ -197,7 +197,7 @@ svg.append("g")
 //                     return d.humidity;
 //                 })]);
 //                 svg.selectAll("g.y.axis")
-//                  .call(yAxis)
+//                  .call(_yAxis)
 //
 //                  svg.selectAll("dot")
 //                      .data(data)
@@ -238,7 +238,7 @@ svg.append("g")
 //                     return d.pressure;
 //                 })]);
 //                 svg.selectAll("g.y.axis")
-//                  .call(yAxis)
+//                  .call(_yAxis)
 //
 //                  svg.selectAll("dot")
 //                      .data(data)
@@ -276,7 +276,7 @@ svg.append("g")
 //                     return d.gas;
 //                 })]);
 //                 svg.selectAll("g .y.axis")
-//                  .call(yAxis)
+//                  .call(_yAxis)
 //
 //                  svg.selectAll("dot")
 //                      .data(data)

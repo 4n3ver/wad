@@ -17,15 +17,26 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
           let filteredData = parsedData;
           const slider = initSlider();
           slider.noUiSlider.on('update', function (values, handle) {
-            console.log(values, filteredData);
-            filteredData = filterByTime(parsedData, parseInt(values[0]), parseInt(values[1]));
-          })
+              console.log(values, filteredData);
+              filteredData = filterByTime(parsedData, parseInt(values[0]),
+                                          parseInt(values[1]));
+          });
 
           var test = colorRatio(filteredData);
           console.log(test);
 
           const map = new WorldMap(worldVector);
-          const bar = new BarChart([1,2,3], {x: d=>d, y: d=>d});
+          const bar = new BarChart([1, 2, 3]);
+          bar.on("click", function (data, event, these) {
+              these.style("stroke", "none");
+              this.style("stroke", "#424242")
+                  .style("stroke-width", "3px");
+          });
+          bar.on("mouseenter", function (data, event, these) {
+              these.style("opacity", 1);
+              this.style("opacity", .85);
+          });
+          bar.updateGraph([1,2]);
 
           map.on("mousemove", function (d) {
               var html = "";
@@ -122,35 +133,36 @@ function processData(rawData) {
  * @returns {object!} time slider
  */
 function initSlider() {
-  d3.select("#main").append("div").attr("id", "slider").style("margin", "20px 100px");
-  var slider = document.getElementById('slider');
+    d3.select("#main").append("div").attr("id", "slider")
+      .style("margin", "20px 100px");
+    var slider = document.getElementById('slider');
 
-  noUiSlider.create(slider, {
-    start: [1960, 2015],
-    step: 1,
-    connect: true,
-    range: {
-      'min': 1960,
-      'max': 2015
-    },
-    pips: {
-      mode: 'count',
-      density: 2,
-      values: 11,
-      stepped: true
-    }
-  });
-  return slider;
+    noUiSlider.create(slider, {
+        start  : [1960, 2015],
+        step   : 1,
+        connect: true,
+        range  : {
+            'min': 1960,
+            'max': 2015
+        },
+        pips   : {
+            mode   : 'count',
+            density: 2,
+            values : 11,
+            stepped: true
+        }
+    });
+    return slider;
 }
 
 /**
  * Filter data to only include data from given range of year.
  * This function is immutable (does not modify the original object).
  *
- * @param {object!} data    data to be filtered
+ * @param {Object!} data    data to be filtered
  * @param {number!} start   the start range (inclusive)
  * @param {number!} end     the end range (inclusive)
- * @returns {object!} new data with population and disaster filtered by year
+ * @returns {Object!} new data with population and disaster filtered by year
  */
 function filterByTime(data, start, end) {
     console.log(start, end);
@@ -159,7 +171,7 @@ function filterByTime(data, start, end) {
             mapValues(v, (v, k) => {
                 if (k === "disaster" || k === "population") {
                     return pickBy(v, (v, k) =>
-                        parseInt(k) >= start && parseInt(k) <= end);
+                    parseInt(k) >= start && parseInt(k) <= end);
                 } else {
                     return v;
                 }
