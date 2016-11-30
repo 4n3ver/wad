@@ -19,7 +19,7 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
             console.log(values, filteredData);
             filteredData = filterByTime(parsedData, parseInt(values[0]), parseInt(values[1]));
           })
-          
+
           const map = new WorldMap(worldVector);
 
           function getTotalDeaths(d, z) {
@@ -115,7 +115,7 @@ function initSlider() {
   d3.select("#main").append("div").attr("id", "slider").style("margin", "20px 100px");
   var slider = document.getElementById('slider');
 
-  noUiSlider.create(slider, { 
+  noUiSlider.create(slider, {
     start: [1960, 2015],
     step: 1,
     connect: true,
