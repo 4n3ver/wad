@@ -24,6 +24,10 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
 
           var test = colorRatio(filteredData);
           console.log(test);
+          var testtest = averageRatioPerCountry(test, 1960, 2015);
+          console.log(testtest);
+          var maxxxx = maxRatio(testtest);
+          console.log(maxxxx);
 
           const map = new WorldMap(worldVector);
           const bar = new BarChart([1, 2, 3]);
@@ -216,6 +220,12 @@ function valueFormat(d) {
     }
 }
 
+/**
+ * Calculate the ratio of total death and population per year to determine the hue of the map.
+ * 
+ * @param {object!} data        data to be calculated
+ * @returns {object!} ratio of the total death and population per year
+ */
 function colorRatio(data) {
   return mapValues (data, value => {
     Object.keys(value.disaster).forEach(disasterYear => {
@@ -238,4 +248,39 @@ function colorRatio(data) {
 
 function valuesOf(obj) {
   return Object.keys(obj).map(k => obj[k]);
+}
+
+/**
+ * Calculate the average ratio per country
+ * 
+ * @param {object!} data        data to be calculated
+ * @param {object!} start       start year of the data that will be calculated
+ * @param {object!} end         end year of the data that will be calculated
+ * @returns {object!} the average of ratio per country
+ */
+function averageRatioPerCountry(data, start, end) {
+  return mapValues(data, value => {
+    value.averageRatio = 0;
+    if (value.ratio) {
+      Object.keys(value.ratio).forEach(ratioYear => {
+        value.averageRatio += value.ratio[ratioYear]
+      });
+      value.averageRatio = value.averageRatio/(end - start);
+    }
+    return value;
+  });
+}
+
+/**
+ * Find the maximum ratio for all country
+ * 
+ * @param {object!} data        data to be calculated
+ * @returns {number!} the maximum ratio for all country
+ */
+function maxRatio(data) {
+  var max = 0;
+  valuesOf(data).forEach(country => {
+    max = Math.max(max, country.averageRatio);
+  });
+  return max;
 }
