@@ -27,7 +27,9 @@ export const valueFormatShort = d => {
     } else if (d > 1000) {
         return `${Math.round(d / 1000 * 10) / 10  }K`;
     } else {
-        return d;
+        return d === void 0 || d === null || `${d}` === `${NaN}`
+            ? 0
+            : d;
     }
 };
 

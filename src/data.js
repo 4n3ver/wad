@@ -160,33 +160,39 @@ export const maxRatio = data => {
     return max;
 };
 
-export const toBarData = data => valuesOf(
-    flatten(
+export const toBarData = data => {
+    const set = {};
+    [
+        "Flood", "Drought", "Landslide", "Earthquake", "Extreme temperature",
+        "Insect infestation", "Mass movement (dry)", "Storm", "Epidemic",
+        "Wildfire", "Volcanic activity", "Animal accident", "Impact"
+    ].forEach(type => set[type] = {
+        affected: 0,
+        damage  : 0,
+        death   : 0,
+        type
+    });
+
+    return valuesOf(
         flatten(
-            valuesOf(data).map(d => valuesOf(d.disaster))
-        ).map(d => valuesOf(d))
-    ).reduce((set, data) => {
-        const type = data["Disaster Type"];
-        if (!set[type]) {
-            set[type] = {
-                affected: 0,
-                damage  : 0,
-                death   : 0,
-                type
-            };
-        }
-        set[type].affected += data["Total affected"] !== "null"
-            ? parseInt(data["Total affected"])
-            : 0;
-        set[type].damage += data["Total damage"] !== "null"
-            ? parseInt(data["Total damage"])
-            : 0;
-        set[type].death += data["Total deaths"] !== "null"
-            ? parseInt(data["Total deaths"])
-            : 0;
-        return set;
-    }, {})
-);
+            flatten(
+                valuesOf(data).map(d => valuesOf(d.disaster))
+            ).map(d => valuesOf(d))
+        ).reduce((set, data) => {
+            const type = data["Disaster Type"];
+            set[type].affected += data["Total affected"] !== "null"
+                ? parseInt(data["Total affected"])
+                : 0;
+            set[type].damage += data["Total damage"] !== "null"
+                ? parseInt(data["Total damage"])
+                : 0;
+            set[type].death += data["Total deaths"] !== "null"
+                ? parseInt(data["Total deaths"])
+                : 0;
+            return set;
+        }, set)
+    );
+};
 
 export const toLineData = data => {
 

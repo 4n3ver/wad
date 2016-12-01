@@ -50,6 +50,9 @@ function main(worldVector, parsedData) {
     const slider = initSlider();
 
     slider.noUiSlider.on("update", function ([start, end]) {
+        start = parseInt(Math.abs(Math.min(start,end)));
+        end = parseInt(Math.abs(Math.max(start, end)));
+
         filteredData = filterParsedData(start, end);
         computeRatio(start, end)(filteredData);
         max = maxRatio(filteredData);
@@ -61,6 +64,7 @@ function main(worldVector, parsedData) {
             computeRatio(start, end)(filteredData);
             max = maxRatio(filteredData);
             barData = toBarData(filteredData);
+            console.log(barData);
             bar.updateGraph(barData);
             map.style("fill", computeChoroplethHue(filteredData, max));
             const barVar = this.value;

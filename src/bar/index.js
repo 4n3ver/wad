@@ -32,7 +32,7 @@ const defaultOptions = {
     height: 600,
     margin: {
         top   : 30,
-        right : 75,
+        right : 100,
         bottom: 30,
         left  : 135
     }
@@ -90,6 +90,7 @@ class BarChart {
         this._observer = {};
         Object.freeze(this);    // prevent this object to be modified
 
+        this._yScale.domain(barData.map(this._label.y));
         this.updateGraph(barData);
     }
 
@@ -125,69 +126,70 @@ class BarChart {
         // prevent transition to be interrupted half-way through
         const uniqueID = `${Math.random()}`;
 
+        // join old data with updated data
+        const joinedBars = this._barGraph.selectAll("rect.bar")
+                               .data(bardata);
+        const joinedText = this._barGraph.selectAll("text.bar-value")
+                               .data(bardata);
+
+        // Remove non-existing data
+        joinedBars.exit().transition(uniqueID)
+                  .duration(300)
+                  .attr("width", this._xScale(0))
+                  .style("fill-opacity", 1e-6)
+                  .remove();
+        joinedText.exit().transition(uniqueID)
+                  .duration(300)
+                  .style("opacity", 1e-6)
+                  .remove();
+
         if (label) {
             this._label.x = label.x;
             this._label.y = label.y;
         }
 
-        bardata.sort((a, b) => this._label.x(b) - this._label.x(a));
-
         // update axis scale
-        this._yScale.domain(bardata.map(this._label.y));
         this._xScale.domain([0, d3.max(bardata, this._label.x)]);
 
-        // join old data with updated data
-        const joinedBarGraph = this._barGraph.selectAll(".bar")
-                                   .data(bardata);
-
-        // Remove non-existing data
-        const oldRects = joinedBarGraph.selectAll("g.bar rect");
-        joinedBarGraph.exit()
-                      .transition(uniqueID)
-                      .duration(300)
-                      .attr("width", this._xScale(0))
-                      .style("fill-opacity", 1e-6)
-                      .remove();
-        const oldText = joinedBarGraph.selectAll("text");
-        oldText.exit()
-               .transition(uniqueID)
-               .duration(300)
-               .style("opacity", 1e-6)
-               .remove();
-
         // create new element for new data
-        const bars = joinedBarGraph.enter()
-                                   .append("g")
-                                   .attr("class", "bar");
-        const newRects = bars.append("rect")
-                             .style("fill",
-                                    d => this.colorScale(this._label.y(d)))
-                             .attr("width", this._xScale(0))
-                             .attr("y", d => this._yScale(this._label.y(d)))
-                             .attr("height", this._yScale.bandwidth())
-                             .attr("x", this._xScale(0));
-        const newText = bars.append("text")
-                            .style("opacity", 0)
-                            .attr("alignment-baseline", "central")
-                            .attr("x", this._xScale(0))
-                            .attr("y", d => this._yScale(this._label.y(d))
-                                                + this._yScale.bandwidth() / 2)
-                            .text(d => valueFormatShort(this._label.x(d)));
+        const newBars = joinedBars.enter()
+                                  .append("rect")
+                                  .attr("id", d => this._label.y(d))
+                                  .attr("class", "bar")
+                                  .style("fill",
+                                         d => this.colorScale(
+                                             this._label.y(d)))
+                                  .attr("width", this._xScale(0))
+                                  .attr("y",
+                                        d => this._yScale(this._label.y(d)))
+                                  .attr("height", this._yScale.bandwidth())
+                                  .attr("x", this._xScale(0));
+        const newText = joinedText.enter()
+                                  .append("text")
+                                  .attr("class", "bar-value")
+                                  .style("opacity", 0)
+                                  .attr("alignment-baseline", "central")
+                                  .attr("x", this._xScale(0))
+                                  .attr("y",
+                                        d => this._yScale(this._label.y(d))
+                                        + this._yScale.bandwidth() / 2)
+                                  .text(d => valueFormatShort(this._label.x(d)));
 
+        // set listener to each newBar
         Object.keys(this._observer)
               .forEach(event => {
                   const callback = this._observer[event];
-                  newRects.on(event, function (data) {
-                      callback.call(d3.select(this), data, d3.event, newRects);
+                  newBars.on(event, function (data) {
+                      callback.call(d3.select(this), data, d3.event, newBars);
                   });
               });
 
         // animate new elements
-        newRects.transition(uniqueID)
-                .delay((d, i) => i * 20)
-                .duration(2000)
-                .attr("width", d => this._xScale(this._label.x(d)))
-                .ease(d3.easeElastic);
+        newBars.transition(uniqueID)
+               .delay((d, i) => i * 20)
+               .duration(2000)
+               .attr("width", d => this._xScale(this._label.x(d)))
+               .ease(d3.easeElastic);
         newText.transition(uniqueID)
                .delay((d, i) => i * 20)
                .duration(2000)
@@ -195,18 +197,19 @@ class BarChart {
                .style("opacity", 1);
 
         // resize the old element with existing data
-        oldRects.transition(uniqueID)
-                .delay((d, i) => i * 20)
-                .duration(1000)
-                .attr("width", d => this._xScale(this._label.x(d)))
-                .attr("height", this._yScale.bandwidth())
-                .attr("y", d => this._yScale(this._label.y(d)));
-        oldText.transition(uniqueID)
-               .delay((d, i) => i * 20)
-               .duration(1000)
-               .attr("x", d => this._xScale(this._label.x(d)) + 5)
-               .attr("y", d => this._yScale(this._label.y(d))
-                                + this._yScale.bandwidth() / 2);
+        joinedBars.transition(uniqueID)
+                  .delay((d, i) => i * 20)
+                  .duration(1000)
+                  .attr("width", d => this._xScale(this._label.x(d)))
+                  .attr("height", this._yScale.bandwidth())
+                  .attr("y", d => this._yScale(this._label.y(d)));
+        joinedText.transition(uniqueID)
+                  .delay((d, i) => i * 20)
+                  .duration(1000)
+                  .attr("x", d => this._xScale(this._label.x(d)) + 5)
+                  .attr("y", d => this._yScale(this._label.y(d))
+                  + this._yScale.bandwidth() / 2)
+                  .text(d => valueFormatShort(this._label.x(d)));
 
         this._yAxis.transition(uniqueID)
             .duration(2000)
@@ -223,7 +226,7 @@ class BarChart {
      */
     on(event, cb) {
         this._observer[event] = cb;
-        const allRects = this._barGraph.selectAll("g.bar rect");
+        const allRects = this._barGraph.selectAll("rect");
         allRects.on(event, function (data) {
             cb.call(d3.select(this), data, d3.event, allRects);
         });
