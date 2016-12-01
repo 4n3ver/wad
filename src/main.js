@@ -15,7 +15,8 @@ import {
     maxRatio,
     filter,
     computeRatio,
-    toBarData
+    toBarData,
+    toLineData
 } from "./data";
 import { initDropDown, initSlider } from "./extras";
 
@@ -38,8 +39,11 @@ function main(worldVector, parsedData) {
     const filterParsedData = filter(parsedData);
 
     let filteredData = parsedData;
+    let lineData = toLineData(filteredData);
     let barData = toBarData(filteredData);
     let max = maxRatio(filteredData);
+
+    console.log(lineData);
 
     const map = new WorldMap(worldVector);
     const bar = new BarChart(barData, {

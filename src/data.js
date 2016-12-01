@@ -195,5 +195,20 @@ export const toBarData = data => {
 };
 
 export const toLineData = data => {
-
+    const obj = flatten(
+        flatten(
+            valuesOf(data).map(d => valuesOf(d.disaster))
+        ).map(d => valuesOf(d))
+    ).reduce((set, data) => {
+        if (!set[data.Year]) {
+            set[data.Year] = 0;
+        }
+        set[data.Year]++;
+        return set;
+    }, {});
+    const result = [];
+    for (let year = 1960; year < 2016; year++) {
+        result.push(obj[year] || 0);
+    }
+    return result;
 };
