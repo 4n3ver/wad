@@ -54,7 +54,7 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
               html += "Total Deaths: ";
               // Total deaths
               html += "<span class=\"tooltip_value\">";
-              html += (parsedData[d.properties.name] != null ? get(
+              html += (filteredData[d.properties.name] != null ? get(
                   filteredData,
                   d.properties.name, "Total deaths") : 0);
               html += "</span><br>";
@@ -62,7 +62,7 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
               html += "<span class=\"tooltip_key\">";
               html += "Total Damage: ";
               html += "<span class=\"tooltip_value\">";
-              html += (parsedData[d.properties.name] != null ? "$"
+              html += (filteredData[d.properties.name] != null ? "$"
               + valueFormat(get(filteredData,
                                 d.properties.name, "Total damage")) : 0);
               html += "</span><br>";
@@ -70,7 +70,7 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
               html += "<span class=\"tooltip_key\">";
               html += "Total Affected: ";
               html += "<span class=\"tooltip_value\">";
-              html += (parsedData[d.properties.name] != null ? get(
+              html += (filteredData[d.properties.name] != null ? get(
                   filteredData,
                   d.properties.name, "Total affected") : 0);
               html += "</span>";
@@ -101,7 +101,14 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
               d3.select(this).attr("fill-opacity", 1);
               d3.select("#tooltip-container").style("display", "none");
           });
-          map.style("fill", d => "#000");
+          var max = maxRatio(filteredData);
+          map.style("fill", d => {
+            if (filteredData[d.properties.name]) {
+                return "rgb(180," + (180 - selectRed(0, max, filteredData[d.properties.name].averageRatio)) + ", " + (180 - selectRed(0, max, filteredData[d.properties.name].averageRatio)) + ")";
+            } else {
+                return "#000";
+            }
+            });
       });
 });
 
@@ -275,7 +282,7 @@ function valuesOf(obj) {
 
 ///////////////////////////////////////////////
 function selectRed(min, max, value) {
-    return (value - min) / (max - min) * 255;
+    return Math.ceil( Math.sqrt(value/max) * 280 );
 }
 /**
  * Calculate the average ratio per country
