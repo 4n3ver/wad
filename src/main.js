@@ -41,13 +41,13 @@ function main(worldVector, parsedData) {
     let barData = toBarData(filteredData);
     let max = maxRatio(filteredData);
 
-    const dropdown = initDropDown();
-    const slider = initSlider();
     const map = new WorldMap(worldVector);
     const bar = new BarChart(barData, {
         x: d => d.damage,
         y: d => d.type
     });
+    const dropdown = initDropDown();
+    const slider = initSlider();
 
     dropdown.on("input", function () {
         const barVar = this.value;
@@ -138,7 +138,7 @@ d3.json("/data/world-topo-min.json", (err, worldVector) =>
     d3.csv("data/disaster_data.csv")
       .get(parsedData => err
           ? console.error(err)
-          : main(worldVector, processData(parsedData))));
+          : main(worldVector, Object.freeze(processData(parsedData)))));
 
 /**
  * Calculate total data for a category for a country.

@@ -135,6 +135,7 @@ class BarChart {
             this._label.y = label.y;
         }
         bardata.sort((a, b) => this._label.x(b) - this._label.x(a));
+        console.log(bardata.map(this._label.x));
         this._yScale.domain(bardata.map(this._label.y));
         this._xScale.domain([0, d3.max(bardata, this._label.x)]);
         const joinedBarGraph = this._barGraph.selectAll(".bar")
@@ -152,7 +153,7 @@ class BarChart {
         const newRects = bars.append("rect")
                              .style("fill",
                                     d => this.colorScale(this._label.y(d)))
-                             .attr("width", 0)
+                             .attr("width", this._xScale(0))
                              .attr("y", d => this._yScale(this._label.y(d)))
                              .attr("height", this._yScale.bandwidth())
                              .attr("x", this._xScale(0));

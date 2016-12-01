@@ -31,7 +31,7 @@ const defaultOptions = {
     margin: {
         top   : 30,
         right : 30,
-        bottom: 80,
+        bottom: 30,
         left  : 50
     }
 };
