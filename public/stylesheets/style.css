@@ -2,6 +2,10 @@ body {
   background: #eceff1;
 }
 
+.domain {
+  opacity: 0;
+}
+
 #tooltip-container {
   position: absolute;
   background-color: #fff;
