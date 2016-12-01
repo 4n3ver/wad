@@ -32,9 +32,9 @@ const defaultOptions = {
     height: 600,
     margin: {
         top   : 30,
-        right : 30,
+        right : 75,
         bottom: 30,
-        left  : 150
+        left  : 135
     }
 };
 
@@ -65,16 +65,12 @@ class BarChart {
     constructor(barData, label, opts) {
         this._setOptions(opts);
 
-        this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+        this.colorScale = () => "#E1BEE7";
         const _svg = this.target.append("svg")
                          .attr("width", this.width + this.margin.left
                                + this.margin.right)
                          .attr("height", this.height + this.margin.top
                                + this.margin.bottom);
-        this._xAxis = _svg.append("g")
-                          .attr("transform",
-                                `translate(${this.margin.left}, ${this.height
-                                + this.margin.top})`);
         this._yAxis = _svg.append("g")
                           .attr("transform",
                                 `translate(${this.margin.left}, ${this.margin.top})`);
@@ -127,26 +123,39 @@ class BarChart {
      */
     updateGraph(bardata, label) {
         // prevent transition to be interrupted half-way through
-        const uniqueID = () => `${Math.random()}`;
-
+        const uniqueID = `${Math.random()}`;
 
         if (label) {
             this._label.x = label.x;
             this._label.y = label.y;
         }
+
         bardata.sort((a, b) => this._label.x(b) - this._label.x(a));
-        console.log(bardata.map(this._label.x));
+
+        // update axis scale
         this._yScale.domain(bardata.map(this._label.y));
         this._xScale.domain([0, d3.max(bardata, this._label.x)]);
+
+        // join old data with updated data
         const joinedBarGraph = this._barGraph.selectAll(".bar")
                                    .data(bardata);
+
+        // Remove non-existing data
         const oldRects = joinedBarGraph.selectAll("g.bar rect");
         joinedBarGraph.exit()
-                      .transition(uniqueID())
+                      .transition(uniqueID)
                       .duration(300)
                       .attr("width", this._xScale(0))
                       .style("fill-opacity", 1e-6)
                       .remove();
+        const oldText = joinedBarGraph.selectAll("text");
+        oldText.exit()
+               .transition(uniqueID)
+               .duration(300)
+               .style("opacity", 1e-6)
+               .remove();
+
+        // create new element for new data
         const bars = joinedBarGraph.enter()
                                    .append("g")
                                    .attr("class", "bar");
@@ -157,6 +166,14 @@ class BarChart {
                              .attr("y", d => this._yScale(this._label.y(d)))
                              .attr("height", this._yScale.bandwidth())
                              .attr("x", this._xScale(0));
+        const newText = bars.append("text")
+                            .style("opacity", 0)
+                            .attr("alignment-baseline", "central")
+                            .attr("x", this._xScale(0))
+                            .attr("y", d => this._yScale(this._label.y(d))
+                                                + this._yScale.bandwidth() / 2)
+                            .text(d => valueFormatShort(this._label.x(d)));
+
         Object.keys(this._observer)
               .forEach(event => {
                   const callback = this._observer[event];
@@ -164,25 +181,35 @@ class BarChart {
                       callback.call(d3.select(this), data, d3.event, newRects);
                   });
               });
-        newRects.transition(uniqueID())
+
+        // animate new elements
+        newRects.transition(uniqueID)
                 .delay((d, i) => i * 20)
                 .duration(2000)
                 .attr("width", d => this._xScale(this._label.x(d)))
                 .ease(d3.easeElastic);
-        oldRects.transition(uniqueID())
+        newText.transition(uniqueID)
+               .delay((d, i) => i * 20)
+               .duration(2000)
+               .attr("x", d => this._xScale(this._label.x(d)) + 5)
+               .style("opacity", 1);
+
+        // resize the old element with existing data
+        oldRects.transition(uniqueID)
                 .delay((d, i) => i * 20)
                 .duration(1000)
                 .attr("width", d => this._xScale(this._label.x(d)))
                 .attr("height", this._yScale.bandwidth())
                 .attr("y", d => this._yScale(this._label.y(d)));
-        this._xAxis.transition(uniqueID())
+        oldText.transition(uniqueID)
+               .delay((d, i) => i * 20)
+               .duration(1000)
+               .attr("x", d => this._xScale(this._label.x(d)) + 5)
+               .attr("y", d => this._yScale(this._label.y(d))
+                                + this._yScale.bandwidth() / 2);
+
+        this._yAxis.transition(uniqueID)
             .duration(2000)
-            //.ease(d3.easeBackOut)
-            .call(d3.axisBottom(this._xScale)
-                    .tickFormat(valueFormatShort));
-        this._yAxis.transition(uniqueID())
-            .duration(2000)
-            //.ease(d3.easeBackOut)
             .call(d3.axisLeft(this._yScale)
                     .tickSize(0));
     }

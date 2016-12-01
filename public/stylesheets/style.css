@@ -1,28 +1,42 @@
 body {
-  background: #eceff1;
+    background: #eceff1;
+}
+
+text {
+    fill: #B0BEC5;
+}
+
+div.noUi-marker.noUi-marker-horizontal.noUi-marker-large {
+    fill: #B0BEC5;
+}
+
+div.noUi-value.noUi-value-horizontal.noUi-value-large {
+    color: #B0BEC5;
 }
 
 .domain {
-  opacity: 0;
+    opacity: 0;
 }
 
 #tooltip-container {
-  position: absolute;
-  background-color: #fff;
-  color: #333;
-  padding: 10px;
-  border: 1px solid;
-  display: none;
+    position: absolute;
+    background-color: #fff;
+    color: #333;
+    padding: 10px;
+    border: 1px solid;
+    display: none;
 }
+
 .tooltip_key {
-  font-weight: bold;
+    font-weight: bold;
 }
+
 .tooltip_value {
-  margin-left: 20px;
-  font-weight: normal;
-  float: right;
+    margin-left: 20px;
+    font-weight: normal;
+    float: right;
 }
 
 div.noUi-connect {
-  background: #78909C;
+    background: #B0BEC5;
 }

@@ -49,14 +49,6 @@ function main(worldVector, parsedData) {
     const dropdown = initDropDown();
     const slider = initSlider();
 
-    dropdown.on("input", function () {
-        const barVar = this.value;
-        bar.updateGraph(barData, {
-            x: d => d[barVar],
-            y: d => d.type
-        });
-    });
-
     slider.noUiSlider.on("update", function ([start, end]) {
         filteredData = filterParsedData(start, end);
         computeRatio(start, end)(filteredData);
@@ -64,10 +56,23 @@ function main(worldVector, parsedData) {
         barData = toBarData(filteredData);
         bar.updateGraph(barData);
         map.style("fill", computeChoroplethHue(filteredData, max));
+        dropdown.on("input", function () {
+            filteredData = filterParsedData(start, end);
+            computeRatio(start, end)(filteredData);
+            max = maxRatio(filteredData);
+            barData = toBarData(filteredData);
+            bar.updateGraph(barData);
+            map.style("fill", computeChoroplethHue(filteredData, max));
+            const barVar = this.value;
+            bar.updateGraph(barData, {
+                x: d => d[barVar],
+                y: d => d.type
+            });
+        });
         bar.on("click", function (data, event, these) {
             these.style("stroke", "none");
             this.style("stroke", "#424242")
-                .style("stroke-width", "3px");
+                .style("stroke-width", "2px");
             filteredData = filterParsedData(start, end, data.type);
             computeRatio(start, end)(filteredData);
             max = maxRatio(filteredData);
