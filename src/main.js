@@ -9,6 +9,7 @@ import * as d3 from "d3";
 import { pickBy, mapValues } from "lodash";
 import WorldMap from "./map";
 import BarChart from "./bar";
+import {compose, valuesOf} from "./util";
 
 d3.json("/data/world-topo-min.json", (err, worldVector) => {
     d3.csv("data/disaster_data.csv")
@@ -18,10 +19,10 @@ d3.json("/data/world-topo-min.json", (err, worldVector) => {
           parsedData = processData(parsedData);
           let filteredData = parsedData;
           const slider = initSlider();
-          slider.noUiSlider.on('update', function (values, handle) {
-              console.log(values, filteredData);
+          slider.noUiSlider.on("update", function (values, handle) {
               filteredData = filterByTime(parsedData, parseInt(values[0]),
                                           parseInt(values[1]));
+              filteredData = averageRatioPerCountry(colorRatio(filteredData));
           });
 
           var test = colorRatio(filteredData);
@@ -276,9 +277,6 @@ function colorRatio(data) {
     });
 }
 
-function valuesOf(obj) {
-    return Object.keys(obj).map(k => obj[k]);
-}
 
 ///////////////////////////////////////////////
 function selectRed(min, max, value) {
