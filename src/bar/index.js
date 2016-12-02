@@ -12,29 +12,23 @@ import { valueFormatShort } from "../util";
 
 /**
  * This callback type is called `eachDataCallBack` and will be called for
- * each country
+ * each bar
  *
  * @callback eachDataCallBack
- * @param {{
- *  id: number,
- *  properties: {
- *      name    : string,
- *      color   : string
- *  }
- * }} data                  data bound to a bar
+ * @param {any}             data bound to a bar
  * @param {string} event    name of the event
  * @param {object} these    selector to all bars
  */
 
 const defaultOptions = {
     target: d3.select("body"),
-    width : 500,
+    width : 600,
     height: 600,
     margin: {
         top   : 30,
-        right : 100,
+        right : 125,
         bottom: 30,
-        left  : 135
+        left  : 125
     }
 };
 
@@ -44,7 +38,7 @@ class BarChart {
      * opts.target should be CSS selector
      * any number is in px
      *
-     * @param {any!}    barData data describing the map to be drawn
+     * @param {any!}    barData array of data to be plotted
      * @param {{
      *      x: Function,
      *      y: Function
@@ -111,6 +105,9 @@ class BarChart {
      * @private
      */
     _setOptions(opts) {
+        if (opts.target) {
+            opts.target = d3.select(opts.target);
+        }
         merge(this, defaultOptions, opts);
         this.height -= this.margin.top + this.margin.bottom;
         this.width -= this.margin.left + this.margin.right;

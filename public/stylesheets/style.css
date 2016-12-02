@@ -6,25 +6,8 @@ text {
     fill: #B0BEC5;
 }
 
-div.noUi-marker.noUi-marker-horizontal.noUi-marker-large {
-    fill: #B0BEC5;
-}
-
-div.noUi-value.noUi-value-horizontal.noUi-value-large {
-    color: #B0BEC5;
-}
-
 .domain {
     opacity: 0;
-}
-
-#tooltip-container {
-    position: absolute;
-    background-color: #fff;
-    color: #333;
-    padding: 10px;
-    border: 1px solid;
-    display: none;
 }
 
 .tooltip_key {
@@ -37,6 +20,87 @@ div.noUi-value.noUi-value-horizontal.noUi-value-large {
     float: right;
 }
 
+.ui.center.aligned.header {
+    position: absolute;
+}
+
+.ui.selection.dropdown {
+    padding: 0;
+    text-align: right;
+    color: #B0BEC5;
+}
+
+div.middle.aligned.center.aligned.one.column.grid {
+    height: 100%;
+}
+
+div.middle.aligned.center.aligned.one.column.grid div.column {
+    width: fit-content;
+}
+
+div.noUi-marker.noUi-marker-horizontal.noUi-marker-large {
+    fill: #B0BEC5;
+    height: 5px;
+}
+
+div.noUi-value.noUi-value-horizontal.noUi-value-large {
+    color: #B0BEC5;
+    font-size: .5em;
+}
+
 div.noUi-connect {
-    background: #B0BEC5;
+    background: #5e97f6;
+    border: none;
+}
+
+div.noUi-horizontal {
+    height: 3px;
+    border: none;
+}
+
+div.noUi-horizontal div.noUi-handle {
+    height: 14px;
+    width: 14px;
+    border: none;
+    border-radius: 100%;
+    left: -7px;
+    background: #5e97f6;
+    box-shadow: none;
+}
+
+div.noUi-handle::before {
+    display: none;
+}
+
+div.noUi-handle::after {
+    display: none;
+}
+
+#tooltip-container {
+    position: absolute;
+    background-color: #fff;
+    color: #333;
+    padding: 10px;
+    border: 1px solid;
+    display: none;
+}
+
+#map-container {
+    width: 66%;
+    display: inline-block;
+}
+
+#bar-container {
+    width: 33%;
+    display: inline-block;
+}
+
+#line-container {
+    width: 100%;
+    display: block;
+}
+
+#slider-container {
+    width: 100%;
+    display: block;
 }

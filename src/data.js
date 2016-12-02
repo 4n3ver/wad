@@ -212,3 +212,28 @@ export const toLineData = (data, start = 1960, end = 2015) => {
     }
     return result;
 };
+
+/**
+ * Calculate total data for a category for a country.
+ * This function is immutable (does not modify the original object).
+ *
+ * @param {object!} data        data to be calculated
+ * @param {string!} countryName name of the country
+ * @param {string!} category    one of three categories: total deaths, total
+ *     damage, number of affected
+ * @returns {number!} total data for a category for a country.
+ */
+export const getTotal = (data, countryName, category) => {
+    const years = Object.keys(data[countryName].disaster);
+    let total = 0;
+    years.forEach(e => {
+        const disasters = Object.keys(data[countryName].disaster[e]);
+        disasters.forEach(f => {
+            const value = parseInt(data[countryName].disaster[e][f][category]);
+            if (!isNaN(value)) {
+                total += value;
+            }
+        });
+    });
+    return total;
+};

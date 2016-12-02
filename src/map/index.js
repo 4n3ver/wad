@@ -22,17 +22,19 @@ import { merge } from "lodash";
  *      color   : string
  *  }
  * }} data  data bound to a country
+ * @param {string} event    name of the event
+ * @param {object} these    selector to all countries
  */
 
 const defaultOptions = {
     target: d3.select("body"),
-    width : 960,
-    height: 960,
+    width : 1000,
+    height: 1000,
     margin: {
-        top   : 30,
+        top   : 10,
         right : 30,
-        bottom: 30,
-        left  : 50
+        bottom: 10,
+        left  : 10
     }
 };
 
@@ -133,6 +135,9 @@ class WorldMap {
      * @private
      */
     _setOptions(opts) {
+        if (opts.target) {
+            opts.target = d3.select(opts.target);
+        }
         merge(this, defaultOptions, opts);
         this.height -= this.margin.top + this.margin.bottom;
         this.width -= this.margin.left + this.margin.right;
@@ -146,7 +151,10 @@ class WorldMap {
      * @param {eachDataCallBack} cb
      */
     on(event, cb) {
-        this._countries.on(event, cb);
+        const these = this._countries;
+        this._countries.on(event, function (data) {
+            cb.call(d3.select(this), data, d3.event, these);
+        });
     }
 
     /**
