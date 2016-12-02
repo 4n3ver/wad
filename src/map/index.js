@@ -91,13 +91,13 @@ class WorldMap {
 
         g.append("path")
          .datum(
-            {
-                type       : "LineString",
-                coordinates: [
-                    [-180, 0], [-90, 0], [0, 0],
-                    [90, 0], [180, 0]
-                ]
-            }
+             {
+                 type       : "LineString",
+                 coordinates: [
+                     [-180, 0], [-90, 0], [0, 0],
+                     [90, 0], [180, 0]
+                 ]
+             }
          )
          .attr("class", "equator")
          .attr("d", path);
@@ -165,11 +165,20 @@ class WorldMap {
      * @param {eachDataCallBack} cb new value for the specified style
      */
     style(key, cb) {
+        this._countries.style(key, cb);
+    }
+
+    /**
+     * Update the hue of the map with the given color generating function
+     *
+     * @param fn
+     */
+    update(fn) {
         // prevent transition to be interrupted half-way through
         const uniqueID = `${Math.random()}`;
         this._countries.transition(uniqueID)
             .delay((d, i) => i * 8).duration(300)
-            .style(key, cb);
+            .style("fill", fn);
     }
 }
 
