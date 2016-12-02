@@ -1,9 +1,12 @@
 body {
     background: #eceff1;
+    font-family: 'Droid Sans', sans-serif;
 }
 
 text {
     fill: #B0BEC5;
+    font-family: 'Droid Sans', sans-serif;
+    color: #2d2a2b;
 }
 
 .domain {

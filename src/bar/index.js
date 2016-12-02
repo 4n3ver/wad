@@ -59,7 +59,7 @@ class BarChart {
     constructor(barData, label, opts) {
         this._setOptions(opts);
 
-        this.colorScale = () => "#E1BEE7";
+        this.colorScale = () => "#d83c61";
         const _svg = this.target.append("svg")
                          .attr("width", this.width + this.margin.left
                                + this.margin.right)
