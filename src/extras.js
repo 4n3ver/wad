@@ -95,7 +95,7 @@ export const drawLineGraph = (lineData, startYear = 1960,
                                 display    : true,
                                 labelString: "frequency",
                                 fontSize   : 3,
-                                fontFamily : "sans-serif"
+                                fontFamily : "Droid Sans"
                             },
                             ticks     : {
                                 autoSkip     : true,
@@ -109,9 +109,13 @@ export const drawLineGraph = (lineData, startYear = 1960,
                     xAxes: [
                         {
                             gridLines : {display: false},
+                            scaleLabel: {
+                                fontSize   : 3,
+                                fontFamily : "Droid Sans"
+                            },
                             ticks     : {
                                 autoSkip     : true,
-                                maxTicksLimit: 20,
+                                maxTicksLimit: 12,
                                 maxRotation  : 0,
                                 padding: 1,
                                 fontColor: "#B0BEC5"

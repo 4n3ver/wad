@@ -4,9 +4,10 @@ body {
 }
 
 text {
-    fill: #B0BEC5;
+    fill: #90A4AE;
     font-family: 'Droid Sans', sans-serif;
     color: #2d2a2b;
+    font-size: .75rem;
 }
 
 .domain {
@@ -30,7 +31,8 @@ text {
 .ui.selection.dropdown {
     padding: 0;
     text-align: right;
-    color: #B0BEC5;
+    color: #2d2a2b;
+    font-size: .75rem
 }
 
 div.middle.aligned.center.aligned.one.column.grid {
@@ -48,7 +50,7 @@ div.noUi-marker.noUi-marker-horizontal.noUi-marker-large {
 
 div.noUi-value.noUi-value-horizontal.noUi-value-large {
     color: #B0BEC5;
-    font-size: .5em;
+    font-size: .75rem;
 }
 
 div.noUi-connect {
