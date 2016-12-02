@@ -194,7 +194,7 @@ export const toBarData = data => {
     );
 };
 
-export const toLineData = data => {
+export const toLineData = (data, start = 1960, end = 2015) => {
     const obj = flatten(
         flatten(
             valuesOf(data).map(d => valuesOf(d.disaster))
@@ -207,7 +207,7 @@ export const toLineData = data => {
         return set;
     }, {});
     const result = [];
-    for (let year = 1960; year < 2016; year++) {
+    for (let year = start; year <= end; year++) {
         result.push(obj[year] || 0);
     }
     return result;

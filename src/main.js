@@ -7,6 +7,7 @@ require.context("../public/", true,
 
 import * as d3 from "d3";
 import { pickBy, mapValues } from "lodash";
+import Chart from "chart.js";
 import WorldMap from "./map";
 import BarChart from "./bar";
 import { valueFormatShort } from "./util";
@@ -20,60 +21,127 @@ import {
 } from "./data";
 import { initDropDown, initSlider } from "./extras";
 
-const computeChoroplethHue = (filteredData, max) =>
-    function (d) {
+const computeChoroplethHue = filteredData => {
+    const max = maxRatio(filteredData);
+    return function (d) {
         if (filteredData[d.properties.name]) {
             return `rgb(180, ${
-                180 - selectRed(0, max, 
-                                filteredData[d.properties.name].averageRatio)
-            }, ${
-                180 - selectRed(0, max,
-                        filteredData[d.properties.name].averageRatio)
-            })`;
+            180 - selectRed(0, max,
+                            filteredData[d.properties.name].averageRatio)
+                }, ${
+            180 - selectRed(0, max,
+                            filteredData[d.properties.name].averageRatio)
+                })`;
         } else {
             return "#000";
         }
     };
+};
+
+function lineChart(lineData, startYear = 1960, target = "#main") {
+    d3.select(target).append("canvas")
+      .attr("width", 1500)
+      .attr("height", 300)
+      .attr("id", "line-chart");
+    const line = new Chart(
+        document.getElementById("line-chart"),
+        {
+            type   : "line",
+            data   : {
+                labels  : lineData.map((c, i, a) => startYear + i),
+                datasets: [
+                    {
+                        fill                     : false,
+                        lineTension              : 0.1,
+                        backgroundColor          : "rgba(75,192,192,0.4)",
+                        borderColor              : "rgba(75,192,192,1)",
+                        borderCapStyle           : "butt",
+                        borderDash               : [],
+                        borderDashOffset         : 0.0,
+                        borderJoinStyle          : "miter",
+                        pointBorderColor         : "rgba(75,192,192,1)",
+                        pointBackgroundColor     : "#fff",
+                        pointBorderWidth         : 1,
+                        pointHoverRadius         : 5,
+                        pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                        pointHoverBorderColor    : "rgba(220,220,220,1)",
+                        pointHoverBorderWidth    : 2,
+                        pointRadius              : 1,
+                        pointHitRadius           : 10,
+                        data                     : lineData,
+                        spanGaps                 : false
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: true,
+                responsive         : false,
+                scales             : {
+                    yAxes: [
+                        {
+                            scaleLabel: {
+                                display    : true,
+                                labelString: "Disaster Frequency",
+                                fontSize   : 8
+                            }
+                        }
+                    ],
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display    : true,
+                                labelString: "Year",
+                                fontSize   : 8
+                            },
+                            ticks     : {
+                                autoSkip     : true,
+                                maxTicksLimit: 20
+                            }
+                        }
+                    ]
+                },
+                title              : {display: false}
+            }
+        }
+    );
+    line.updateGraph = function (lineData, startYear) {
+        line.data.datasets[0].data = lineData;
+        line.data.labels = lineData.map((c, i, a) => startYear + i);
+        line.update(2000);
+    };
+    return line;
+}
 
 function main(worldVector, parsedData) {
     const filterParsedData = filter(parsedData);
 
     let filteredData = parsedData;
-    let lineData = toLineData(filteredData);
-    let barData = toBarData(filteredData);
-    let max = maxRatio(filteredData);
-
-    console.log(lineData);
 
     const map = new WorldMap(worldVector);
-    const bar = new BarChart(barData, {
+    const bar = new BarChart(toBarData(filteredData), {
         x: d => d.damage,
         y: d => d.type
     });
     const dropdown = initDropDown();
     const slider = initSlider();
+    const line = lineChart(toLineData(filteredData));
+    console.log(line);
 
     slider.noUiSlider.on("update", function ([start, end]) {
-        start = parseInt(Math.abs(Math.min(start,end)));
+        start = parseInt(Math.abs(Math.min(start, end)));
         end = parseInt(Math.abs(Math.max(start, end)));
 
         filteredData = filterParsedData(start, end);
         computeRatio(start, end)(filteredData);
-        max = maxRatio(filteredData);
-        barData = toBarData(filteredData);
-        bar.updateGraph(barData);
-        map.style("fill", computeChoroplethHue(filteredData, max));
+        bar.updateGraph(toBarData(filteredData));
+        line.updateGraph(toLineData(filteredData, start, end), start);
+        map.style("fill", computeChoroplethHue(filteredData));
         dropdown.on("input", function () {
             filteredData = filterParsedData(start, end);
             computeRatio(start, end)(filteredData);
-            max = maxRatio(filteredData);
-            barData = toBarData(filteredData);
-            console.log(barData);
-            bar.updateGraph(barData);
-            map.style("fill", computeChoroplethHue(filteredData, max));
-            const barVar = this.value;
-            bar.updateGraph(barData, {
-                x: d => d[barVar],
+            map.style("fill", computeChoroplethHue(filteredData));
+            bar.updateGraph(toBarData(filteredData), {
+                x: d => d[this.value],
                 y: d => d.type
             });
         });
@@ -83,9 +151,8 @@ function main(worldVector, parsedData) {
                 .style("stroke-width", "2px");
             filteredData = filterParsedData(start, end, data.type);
             computeRatio(start, end)(filteredData);
-            max = maxRatio(filteredData);
-            barData = toBarData(filteredData);
-            map.style("fill", computeChoroplethHue(filteredData, max));
+            line.updateGraph(toLineData(filteredData, start, end), start);
+            map.style("fill", computeChoroplethHue(filteredData));
         });
     });
 
@@ -144,7 +211,7 @@ function main(worldVector, parsedData) {
         d3.select("#tooltip-container").style("display", "none");
     });
 
-    map.style("fill", computeChoroplethHue(filteredData, max));
+    map.style("fill", computeChoroplethHue(filteredData));
 }
 
 d3.json("/data/world-topo-min.json", (err, worldVector) =>
