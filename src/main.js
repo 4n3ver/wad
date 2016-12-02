@@ -21,13 +21,6 @@ import {
 } from "./data";
 import { initDropDown, initSlider, drawLineGraph } from "./extras";
 
-const filterAndComputeRatio = filterFn => (start, end, disasterType,
-                                           country) => {
-    const res = filterFn(start, end, disasterType, country);
-    computeRatio(start, end)(res);
-    return res;
-};
-
 const selectRed = (max, value) => Math.ceil(Math.sqrt(value / max) * 280);
 
 const computeChoroplethHue = filteredData => {
@@ -43,10 +36,28 @@ const computeChoroplethHue = filteredData => {
     };
 };
 
-function main(worldVector, parsedData) {
-    const filterParsedData = filterAndComputeRatio(filter(parsedData));
+const filterAndComputeRatio = filterFn => (start, end, disasterType,
+                                           country) => {
+    const res = filterFn(start, end, disasterType, country);
+    computeRatio(start, end)(res);
+    return res;
+};
 
+const applyFilteredData = filterFn =>
+    (map, bar, line) => (start, end, disasterType, country) => {
+        const filteredData = filterFn(start, end, disasterType, country);
+        bar.updateGraph(toBarData(filteredData));
+        line.updateGraph(toLineData(filteredData, start, end), start);
+        map.style("fill", computeChoroplethHue(filteredData));
+        return filteredData;
+    };
+
+function main(worldVector, parsedData) {
     let filteredData = parsedData;
+    let startYear = 1960;
+    let endYear = 2015;
+    let country = null;
+    let disasterType = null;
 
     const dropDown = initDropDown("#bar-container");
     const slider = initSlider("#slider-container");
@@ -58,39 +69,48 @@ function main(worldVector, parsedData) {
     const line = drawLineGraph(toLineData(filteredData), 1960,
                                "#line-container");
 
-    map.style("fill", computeChoroplethHue(filteredData));
+    const filterParsedData = filterAndComputeRatio(filter(parsedData));
+    const filterAll = applyFilteredData(filterParsedData)(map, bar, line);
 
-    slider.noUiSlider.on("update", function ([start, end]) {
-        start = parseInt(Math.abs(Math.min(start, end)));
-        end = parseInt(Math.abs(Math.max(start, end)));
+    filteredData = filterAll(startYear, endYear, disasterType, country);
 
-        filteredData = filterParsedData(start, end);
-        bar.updateGraph(toBarData(filteredData));
-        line.updateGraph(toLineData(filteredData, start, end), start);
+    dropDown.on("input", function () {
+        bar.style("stroke", () => "none");
+        disasterType = null;
+        filteredData = filterParsedData(startYear, endYear, disasterType,
+                                        country);
+        line.updateGraph(toLineData(filteredData, startYear, endYear),
+                         startYear);
         map.style("fill", computeChoroplethHue(filteredData));
-        dropDown.on("input", function () {
-            filteredData = filterParsedData(start, end);
-            map.style("fill", computeChoroplethHue(filteredData));
-            bar.updateGraph(toBarData(filteredData), {
-                x: d => d[this.value],
-                y: d => d.type
-            });
+        bar.updateGraph(toBarData(filteredData), {
+            x: d => d[this.value],
+            y: d => d.type
         });
-        bar.on("click", function (data, event, these) {
-            these.style("stroke", "none");
-            this.style("stroke", "#424242")
-                .style("stroke-width", "1px");
-            filteredData = filterParsedData(start, end, data.type);
-            line.updateGraph(toLineData(filteredData, start, end), start);
-            map.style("fill", computeChoroplethHue(filteredData));
-        });
-        map.on("click", function (data, event, these) {
-            these.style("stroke", "none");
-            this.style("stroke", "#424242")
-                .style("stroke-width", "2px");
-        });
+        console.log(startYear, endYear, disasterType, country);
     });
 
+    slider.noUiSlider.on("update", function ([start, end]) {
+        startYear = parseInt(Math.abs(Math.min(start, end)));
+        endYear = parseInt(Math.abs(Math.max(start, end)));
+        map.style("stroke", "none");
+        country = null;
+        filteredData = filterAll(startYear, endYear, disasterType);
+        console.log(startYear, endYear, disasterType, country);
+    });
+
+    bar.on("click", function (data, event, these) {
+        disasterType = data.type;
+        these.style("stroke", "none");
+        this.style("stroke", "#424242")
+            .style("stroke-width", "1px");
+        map.style("stroke", "none");
+        country = null;
+        filteredData = filterParsedData(startYear, endYear, disasterType);
+        line.updateGraph(toLineData(filteredData, startYear, endYear),
+                         startYear);
+        map.style("fill", computeChoroplethHue(filteredData));
+        console.log(startYear, endYear, disasterType, country);
+    });
     bar.on("mouseenter", function (data, event, these) {
         this.style("opacity", .5);
     });
@@ -98,7 +118,24 @@ function main(worldVector, parsedData) {
         this.style("opacity", 1);
     });
 
+    map.on("click", function (data, event, these) {
+        country = data.properties.name;
+        these.style("stroke", "none");
+        this.style("stroke", "#424242")
+            .style("stroke-width", "2px");
+        bar.style("stroke", () => "none");
+        disasterType = null;
+        filteredData = filterParsedData(startYear, endYear, disasterType,
+                                        country);
+        bar.updateGraph(toBarData(filteredData));
+        line.updateGraph(toLineData(filteredData, startYear, endYear),
+                         startYear);
+        console.log(startYear, endYear, disasterType, country);
+    });
     map.on("mousemove", function (d) {
+        if (!filteredData[d.properties.name]) {
+            return;
+        }
         let html = "";
         // Country name
         html += "<div class=\"tooltip_key\">";
@@ -109,7 +146,7 @@ function main(worldVector, parsedData) {
         // Total deaths
         html += "<span class=\"tooltip_value\">";
         html += (filteredData[d.properties.name] !== null
-            ? get(filteredData,d.properties.name, "Total deaths")
+            ? get(filteredData, d.properties.name, "Total deaths")
             : 0);
         html += "</span><br>";
         // Total damage
@@ -117,8 +154,8 @@ function main(worldVector, parsedData) {
         html += "Total Damage: ";
         html += "<span class=\"tooltip_value\">";
         html += (filteredData[d.properties.name] !== null
-            ? `$${valueFormatShort(get(filteredData, 
-                                 d.properties.name, "Total damage"))}`
+            ? `$${valueFormatShort(get(filteredData,
+                                       d.properties.name, "Total damage"))}`
             : 0);
         html += "</span><br>";
         // Total affected

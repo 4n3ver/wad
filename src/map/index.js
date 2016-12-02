@@ -168,7 +168,7 @@ class WorldMap {
         // prevent transition to be interrupted half-way through
         const uniqueID = `${Math.random()}`;
         this._countries.transition(uniqueID)
-            .delay((d, i) => i * 8).duration(1000)
+            .delay((d, i) => i * 8).duration(300)
             .style(key, cb);
     }
 }

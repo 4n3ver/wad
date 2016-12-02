@@ -228,6 +228,17 @@ class BarChart {
             cb.call(d3.select(this), data, d3.event, allRects);
         });
     }
+
+    /**
+     * Change the style of each bar into the return value of the specified
+     * callback.
+     *
+     * @param {string} key name of the style to modify
+     * @param {eachDataCallBack} cb new value for the specified style
+     */
+    style(key, cb) {
+        this._barGraph.selectAll("rect").style(key, cb);
+    }
 }
 
 export default BarChart;
