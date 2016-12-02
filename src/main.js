@@ -43,16 +43,8 @@ const filterAndComputeRatio = filterFn => (start, end, disasterType,
     return res;
 };
 
-const applyFilteredData = filterFn =>
-    (map, bar, line) => (start, end, disasterType, country) => {
-        const filteredData = filterFn(start, end, disasterType, country);
-        bar.updateGraph(toBarData(filteredData));
-        line.updateGraph(toLineData(filteredData, start, end), start);
-        map.update(computeChoroplethHue(filteredData));
-        return filteredData;
-    };
-
 function main(worldVector, parsedData) {
+    const filterParsedData = filterAndComputeRatio(filter(parsedData));
     let filteredData = parsedData;
     let startYear = 1960;
     let endYear = 2015;
@@ -68,11 +60,6 @@ function main(worldVector, parsedData) {
     }, {target: "#bar-container"});
     const line = drawLineGraph(toLineData(filteredData), 1960,
                                "#line-container");
-
-    const filterParsedData = filterAndComputeRatio(filter(parsedData));
-    const filterAll = applyFilteredData(filterParsedData)(map, bar, line);
-
-    filteredData = filterAll(startYear, endYear, disasterType, country);
 
     bar.style("cursor", "pointer");
     map.style("cursor", "pointer");
@@ -97,7 +84,13 @@ function main(worldVector, parsedData) {
     slider.noUiSlider.on("update", function ([start, end]) {
         startYear = parseInt(Math.abs(Math.min(start, end)));
         endYear = parseInt(Math.abs(Math.max(start, end)));
-        filteredData = filterAll(startYear, endYear, disasterType);
+        filteredData = filterParsedData(startYear, endYear, disasterType,
+                                        country);
+        line.updateGraph(toLineData(filteredData, startYear, endYear),
+                         startYear);
+        map.update(computeChoroplethHue(filteredData));
+        bar.updateGraph(
+            toBarData(filterParsedData(startYear, endYear, null, country)));
         console.log(startYear, endYear, disasterType, country);
     });
 
