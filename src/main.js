@@ -78,7 +78,7 @@ function main(worldVector, parsedData) {
     map.style("cursor", "pointer");
 
     dropDown.on("input", function () {
-        bar.style("stroke", () => "none");
+        bar.style("fill", "rgba(0,0,0,0)");
         disasterType = null;
         map.style("stroke", () => "none");
         country = null;
@@ -103,22 +103,23 @@ function main(worldVector, parsedData) {
 
     bar.on("click", function (data, event, these) {
         disasterType = data.type;
-        these.style("stroke", "none");
-        this.style("stroke", "#424242")
-            .style("stroke-width", "1px");
+        these.style("fill", "rgba(0,0,0,0)");
+        this.style("fill", "rgba(207,216,220,.3)");
         map.style("stroke", "none");
         country = null;
         filteredData = filterParsedData(startYear, endYear, disasterType);
         line.updateGraph(toLineData(filteredData, startYear, endYear),
                          startYear);
         map.update(computeChoroplethHue(filteredData));
+        bar.updateGraph(
+            toBarData(filterParsedData(startYear, endYear, null, country)));
         console.log(startYear, endYear, disasterType, country);
     });
     bar.on("mouseenter", function (data, event, these) {
-        this.style("opacity", .5);
+        this.style("stroke", "#424242");
     });
     bar.on("mouseleave", function (data, event, these) {
-        this.style("opacity", 1);
+        this.style("stroke", "none");
     });
 
     map.on("click", function (data, event, these) {
@@ -127,12 +128,14 @@ function main(worldVector, parsedData) {
         this.style("stroke", "#424242")
             .style("stroke-width", "2px");
         disasterType = null;
-        bar.style("stroke", () => "none");
+        bar.style("fill", "rgba(0,0,0,0)");
         filteredData = filterParsedData(startYear, endYear, disasterType,
                                         country);
         bar.updateGraph(toBarData(filteredData));
         line.updateGraph(toLineData(filteredData, startYear, endYear),
                          startYear);
+        map.update(computeChoroplethHue(
+            filterParsedData(startYear, endYear, disasterType)));
         console.log(startYear, endYear, disasterType, country);
     });
     map.on("mousemove", function (d) {

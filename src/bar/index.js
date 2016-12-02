@@ -28,7 +28,7 @@ const defaultOptions = {
         top   : 30,
         right : 125,
         bottom: 30,
-        left  : 125
+        left  : 135
     }
 };
 
@@ -76,7 +76,7 @@ class BarChart {
                          .range([0, this.width]);
         this._yScale = d3.scaleBand()
                          .range([0, this.height])
-                         .padding(.15);
+                         .padding(.5);
         this._label = Object.assign({}, label || {
                                         x: d => d,
                                         y: d => d
@@ -128,6 +128,8 @@ class BarChart {
                                .data(bardata);
         const joinedText = this._barGraph.selectAll("text.bar-value")
                                .data(bardata);
+        const joinedHighlight = this._barGraph.selectAll("rect.bar-highlight")
+                                    .data(bardata);
 
         // Remove non-existing data
         joinedBars.exit().transition(uniqueID)
@@ -139,6 +141,7 @@ class BarChart {
                   .duration(300)
                   .style("opacity", 1e-6)
                   .remove();
+        joinedHighlight.exit().remove();
 
         if (label) {
             this._label.x = label.x;
@@ -149,6 +152,17 @@ class BarChart {
         this._xScale.domain([0, d3.max(bardata, this._label.x)]);
 
         // create new element for new data
+        joinedHighlight.enter()
+                       .append("rect")
+                       .attr("class", "bar-highlight")
+                       .style("fill", "rgba(0,0,0,0)")
+                       .style("stroke-width", ".1px")
+                       .attr("width",
+                             this.width + this.margin.left + this.margin.right)
+                       .attr("y", d => this._yScale(this._label.y(d))
+                       - this._yScale.bandwidth() / 2)
+                       .attr("height", this._yScale.bandwidth() * 2)
+                       .attr("x", -this.margin.left);
         const newBars = joinedBars.enter()
                                   .append("rect")
                                   .attr("id", d => this._label.y(d))
@@ -170,7 +184,8 @@ class BarChart {
                                   .attr("y",
                                         d => this._yScale(this._label.y(d))
                                         + this._yScale.bandwidth() / 2)
-                                  .text(d => valueFormatShort(this._label.x(d)));
+                                  .text(
+                                      d => valueFormatShort(this._label.x(d)));
 
         // set listener to each newBar
         Object.keys(this._observer)
@@ -207,11 +222,17 @@ class BarChart {
                   .attr("y", d => this._yScale(this._label.y(d))
                   + this._yScale.bandwidth() / 2)
                   .text(d => valueFormatShort(this._label.x(d)));
-
+        joinedHighlight.attr("height", this._yScale.bandwidth() * 2)
+                       .attr("y", d => this._yScale(this._label.y(d))
+                       - this._yScale.bandwidth() / 2);
         this._yAxis.transition(uniqueID)
             .duration(2000)
             .call(d3.axisLeft(this._yScale)
                     .tickSize(0));
+
+        joinedHighlight.each(function () {
+            return this.parentNode.appendChild(this);
+        });
     }
 
     /**
@@ -223,7 +244,7 @@ class BarChart {
      */
     on(event, cb) {
         this._observer[event] = cb;
-        const allRects = this._barGraph.selectAll("rect");
+        const allRects = this._barGraph.selectAll("rect.bar-highlight");
         allRects.on(event, function (data) {
             cb.call(d3.select(this), data, d3.event, allRects);
         });
@@ -237,7 +258,7 @@ class BarChart {
      * @param {eachDataCallBack} cb new value for the specified style
      */
     style(key, cb) {
-        this._barGraph.selectAll("rect").style(key, cb);
+        this._barGraph.selectAll("rect.bar-highlight").style(key, cb);
     }
 }
 
