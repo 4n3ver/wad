@@ -157,6 +157,7 @@ function main(worldVector, parsedData) {
     });
     map.on("mousemove", function (d, event) {
         if (!filteredDataBy_TimeType[d.properties.name]) {
+            // TODO: DATA NOT AVAILABLE HERE
             return;
         }
 
