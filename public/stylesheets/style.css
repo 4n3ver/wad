@@ -99,7 +99,7 @@ div.noUi-handle::after {
 #legend-container {
     position: absolute;
     top: 95%;
-    left: 55%;
+    left: 60%;
     height: 1%;
     width: 30%;
 }
@@ -125,4 +125,13 @@ div.noUi-handle::after {
     top: 4%;
     display: block;
     padding-left: 41%;
+    color: #B0BEC5;
+}
+
+#reset {
+    top: 3.5%;
+    margin-left: 9%;
+    z-index: 99999;
+    display: inline-block;
+    position:absolute;
 }

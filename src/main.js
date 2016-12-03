@@ -73,6 +73,16 @@ function main(worldVector, parsedData) {
     const line = drawLineGraph(toLineData(filteredDataBy_Time), startYear,
                                "#line-container");
 
+    document.getElementById("reset").onclick = function () {
+        disasterType = null;
+        bar.style("fill", "rgba(0,0,0,0)");
+
+        country = null;
+        map.style("stroke", () => "none");
+
+        slider.noUiSlider.set([1960, 2015]);
+    };
+
     const updateAllGraph = () => {
         filteredDataBy_TimeType = filterByDisasterType(disasterType)(
             filteredDataBy_Time);
