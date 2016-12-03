@@ -85,7 +85,7 @@ class BarChart {
         Object.freeze(this);    // prevent this object to be modified
 
         this._yScale.domain(barData.map(this._label.y));
-        this.updateGraph(barData);
+        this.update(barData);
     }
 
     /**
@@ -119,7 +119,7 @@ class BarChart {
      * @param bardata   new data set
      * @param label
      */
-    updateGraph(bardata, label) {
+    update(bardata, label) {
         // prevent transition to be interrupted half-way through
         const uniqueID = `${Math.random()}`;
 

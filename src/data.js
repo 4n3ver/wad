@@ -1,8 +1,15 @@
-"use strict";
 /**
+ * Functions to append UI elements
+ *
+ * @author Felly Rusli (frusli6@gatech.edu)
+ * @author Yoel Ivan (yivan3@gatech.edu)
+ * @author Marvin Cangciano (mcangciano3@gatech.edu)
  * @version 0.0a
  * @flow
  */
+
+"use strict";
+
 import { pickBy, mapValues, get, flatten } from "lodash";
 import { valuesOf, compose, mutate } from "./util";
 
@@ -24,7 +31,7 @@ export const processData = rawData => {
                 jsonObject[row["Country Name"]].population[key] = parseInt(
                     row[key]);
             } else {
-                if (`${parseInt(row["Country Name"][key])  }` != "NaN") {
+                if (`${parseInt(row["Country Name"][key])  }` !== "NaN") {
                     jsonObject[row["Country Name"]].disaster[row.Year][row["Disaster Type"]][key]
                         = parseInt(row[key]);
                 } else {
@@ -38,13 +45,14 @@ export const processData = rawData => {
 };
 
 /**
- * Filter data to only include data from given range of year.
- * This function is immutable (does not modify the original object).
+ * Generate a function to filter data to only include data from given range of
+ * year.
+ * The returned function is immutable (does not modify the original object).
  *
- * @param {Object!} data    data to be filtered
  * @param {number!} start   the start range (inclusive)
  * @param {number!} end     the end range (inclusive)
- * @returns {Object} new data with population and disaster filtered by year
+ * @returns {Function}  function that will filter data to only include data
+ *                      from `start` to `end` inclusive
  */
 export const filterByTime = (start, end) => data =>
     mapValues(data, countryData => mapValues(countryData, (propData, prop) =>
@@ -53,43 +61,66 @@ export const filterByTime = (start, end) => data =>
             : propData));
 
 /**
+ * Generate a function to filter data to only include data with specified
+ * disaster types.
+ * The returned function is immutable (does not modify the original object).
  *
- * @param types
+ * @param {string!} types   disaster types to be included
+ * @returns {Function}  function that will filter data to only include data
+ *                      with specified disaster types
  */
 export const filterByDisasterType = (...types) => data =>
-    mapValues(data, types && types.length > 0
-        ? countryData => mapValues(countryData, (propData, prop) => {
-        if (prop === "disaster") {
-            // remove all that do not match
-            propData = mapValues(
-                propData,
-                disasterData =>
-                    pickBy(disasterData, (stats, disasterType) =>
-                        types.some(type => disasterType === type))
-            );
+    types.length === 0 || types.some(c => c === null || c === void 0)
+        ? data
+        : mapValues(data,
+                    countryData => mapValues(countryData, (propData, prop) => {
+                        if (prop === "disaster") {
+                            // remove all that do not match
+                            propData = mapValues(
+                                propData,
+                                disasterData =>
+                                    pickBy(disasterData,
+                                           (stats, disasterType) =>
+                                               types.some(type => disasterType
+                                               === type))
+                            );
 
-            // remove all year that has no disaster
-            return pickBy(
-                propData,
-                disasterData => Object.keys(disasterData).length > 0
-            );
-        } else {
-            return propData;
-        }
-    })
-        : null);
+                            // remove all year that has no disaster
+                            return pickBy(
+                                propData,
+                                disasterData => Object.keys(
+                                    disasterData).length > 0
+                            );
+                        } else {
+                            return propData;
+                        }
+                    }));
 
 /**
+ * Generate a function to filter data to only include data with specified
+ * countries
+ * The returned function is immutable (does not modify the original object).
  *
- * @param countries
+ * @param {string!} countries   countries to be included
+ * @returns {Function}  function that will filter data to only include data
+ *                      with specified countries
  */
 export const filterByCountries = (...countries) => data =>
-    pickBy(data, countries && countries.length > 0
-        ? (console.log(countries), (countryData,
-                                    countryName) => countries.some(
-        c => c === countryName))
-        : null);
+    countries.length === 0 || countries.some(c => c === null || c === void 0)
+        ? data
+        : pickBy(data, (countryData, countryName) =>
+        countries.some(c => c === countryName));
 
+/**
+ * Generate a function to filter data to only include data with specified
+ * countries and disaster types and year within `startYear` and `endYear`.
+ * The returned function immutable (does not modify the original object).
+ *
+ * @param {Object!} pristineData   data to be filtered
+ * @returns {Function}  function that will filter data to only include data
+ *                      with specified countries and disaster types and
+ *                      year within `startYear` and `endYear`.
+ */
 export const filter = pristineData =>
     (startYear, endYear, disasterType, country) =>
         compose(
@@ -217,10 +248,10 @@ export const toLineData = (data, start = 1960, end = 2015) => {
  * Calculate total data for a category for a country.
  * This function is immutable (does not modify the original object).
  *
- * @param {object!} data        data to be calculated
+ * @param {Object!} data        data to be calculated
  * @param {string!} countryName name of the country
  * @param {string!} category    one of three categories: total deaths, total
- *     damage, number of affected
+ *                              damage, number of affected
  * @returns {number!} total data for a category for a country.
  */
 export const getTotal = (data, countryName, category) => {

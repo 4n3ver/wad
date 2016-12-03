@@ -1,4 +1,14 @@
-/* @flow */
+/**
+ * Place where everything is put together...
+ *
+ * @author Marvin Cangciano (mcangciano3@gatech.edu)
+ * @author Marissa D'Souza (mdsouza8@gatech.edu)
+ * @author Yoel Ivan (yivan3@gatech.edu)
+ * @author Felly Rusli (frusli6@gatech.edu)
+ * @version 0.0a
+ * @flow
+ */
+
 "use strict";
 
 // tell webpack to copy static html and css to build folder
@@ -13,13 +23,20 @@ import { valueFormatShort } from "./util";
 import {
     processData,
     maxRatio,
-    filter,
     computeRatio,
     toBarData,
     toLineData,
-    getTotal as get
+    getTotal as get,
+    filterByDisasterType,
+    filterByTime,
+    filterByCountries
 } from "./data";
-import { initDropDown, initSlider, drawLineGraph } from "./extras";
+import {
+    drawDisasterTypeDropdown,
+    drawTimeSlider,
+    drawLineGraph,
+    drawChoroplethLegend
+} from "./extras";
 
 const selectRed = (max, value) => Math.ceil(Math.sqrt(value / max) * 225);
 
@@ -36,83 +53,84 @@ const computeChoroplethHue = filteredData => {
     };
 };
 
-const filterAndComputeRatio = filterFn => (start, end, disasterType,
-                                           country) => {
-    const res = filterFn(start, end, disasterType, country);
-    computeRatio(start, end)(res);
-    return res;
-};
-
 function main(worldVector, parsedData) {
-    const filterParsedData = filterAndComputeRatio(filter(parsedData));
-    let filteredData = parsedData;
     let startYear = 1960;
     let endYear = 2015;
     let country = null;
     let disasterType = null;
+    let barVariable = "affected";
+    let filteredDataBy_Time = parsedData;
+    let filteredDataBy_TimeType = parsedData;
 
-    const dropDown = initDropDown("#bar-container");
-    const slider = initSlider("#slider-container");
+    drawChoroplethLegend();
+    const dropDown = drawDisasterTypeDropdown("#bar-container");
+    const slider = drawTimeSlider("#slider-container");
     const map = new WorldMap(worldVector, {target: "#map-container"});
-    const bar = new BarChart(toBarData(filteredData), {
-        x: d => d.affected,
+    const bar = new BarChart(toBarData(filteredDataBy_Time), {
+        x: d => d[barVariable],
         y: d => d.type
     }, {target: "#bar-container"});
-    const line = drawLineGraph(toLineData(filteredData), 1960,
+    const line = drawLineGraph(toLineData(filteredDataBy_Time), startYear,
                                "#line-container");
+
+    const updateAllGraph = () => {
+        filteredDataBy_TimeType = filterByDisasterType(disasterType)(
+            filteredDataBy_Time);
+        computeRatio(startYear, endYear)(filteredDataBy_TimeType);
+        map.update(computeChoroplethHue(filteredDataBy_TimeType));
+
+        const filteredDataBy_TimeCountries = filterByCountries(country)(
+            filteredDataBy_Time);
+        bar.update(toBarData(filteredDataBy_TimeCountries), {
+            x: d => d[barVariable],
+            y: d => d.type
+        });
+
+        const filteredDataBy_TimeCountriesType = filterByCountries(country)(
+            filteredDataBy_TimeType);
+        line.update(
+            toLineData(filteredDataBy_TimeCountriesType, startYear, endYear),
+            startYear);
+        console.log(startYear, endYear, disasterType, country, barVariable);
+    };
 
     bar.style("cursor", "pointer");
     map.style("cursor", "pointer");
     map.style("fill", "rgb(255,225,225)");
 
     dropDown.on("input", function () {
-        bar.style("fill", "rgba(0,0,0,0)");
+        barVariable = this.value;
+
         disasterType = null;
-        map.style("stroke", () => "none");
+        bar.style("fill", "rgba(0,0,0,0)");
+
         country = null;
-        filteredData = filterParsedData(startYear, endYear, disasterType,
-                                        country);
-        line.updateGraph(toLineData(filteredData, startYear, endYear),
-                         startYear);
-        map.update(computeChoroplethHue(filteredData));
-        bar.updateGraph(toBarData(filteredData), {
-            x: d => d[this.value],
-            y: d => d.type
-        });
-        console.log(startYear, endYear, disasterType, country);
+        map.style("stroke", () => "none");
+
+        updateAllGraph();
     });
 
     slider.noUiSlider.on("update", function ([start, end]) {
         startYear = parseInt(Math.abs(Math.min(start, end)));
         endYear = parseInt(Math.abs(Math.max(start, end)));
-        filteredData = filterParsedData(startYear, endYear, disasterType,
-                                        country);
-        line.updateGraph(toLineData(filteredData, startYear, endYear),
-                         startYear);
-        map.update(computeChoroplethHue(filteredData));
-        bar.updateGraph(
-            toBarData(filterParsedData(startYear, endYear, null, country)));
-        console.log(startYear, endYear, disasterType, country);
+        filteredDataBy_Time = filterByTime(startYear, endYear)(parsedData);
+        updateAllGraph();
     });
 
     bar.on("click", function (data, event, these) {
         disasterType = data.type;
         these.style("fill", "rgba(0,0,0,0)");
         this.style("fill", "rgba(207,216,220,.3)");
-        map.style("stroke", "none");
+
         country = null;
-        filteredData = filterParsedData(startYear, endYear, disasterType);
-        line.updateGraph(toLineData(filteredData, startYear, endYear),
-                         startYear);
-        map.update(computeChoroplethHue(filteredData));
-        bar.updateGraph(
-            toBarData(filterParsedData(startYear, endYear, null, country)));
-        console.log(startYear, endYear, disasterType, country);
+        map.style("stroke", "none");
+
+        updateAllGraph();
     });
-    bar.on("mouseenter", function (data, event, these) {
+    bar.on("mouseenter", function () {
         this.style("stroke", "#424242");
     });
-    bar.on("mouseleave", function (data, event, these) {
+    bar.on("mouseleave", function () {
         this.style("stroke", "none");
     });
 
@@ -121,21 +139,13 @@ function main(worldVector, parsedData) {
         these.style("stroke", "none");
         this.style("stroke", "#424242")
             .style("stroke-width", "2px");
+
         disasterType = null;
         bar.style("fill", "rgba(0,0,0,0)");
-        filteredData = filterParsedData(startYear, endYear, disasterType,
-                                        country);
-        bar.updateGraph(toBarData(filteredData));
-        line.updateGraph(toLineData(filteredData, startYear, endYear),
-                         startYear);
-        map.update(computeChoroplethHue(
-            filterParsedData(startYear, endYear, disasterType)));
-        console.log(startYear, endYear, disasterType, country);
+
+        updateAllGraph();
     });
     map.on("mousemove", function (d) {
-        if (!filteredData[d.properties.name]) {
-            return;
-        }
         let html = "";
         // Country name
         html += "<div class=\"tooltip_key\">";
@@ -145,16 +155,16 @@ function main(worldVector, parsedData) {
         html += "Total Deaths: ";
         // Total deaths
         html += "<span class=\"tooltip_value\">";
-        html += (filteredData[d.properties.name] !== null
-            ? get(filteredData, d.properties.name, "Total deaths")
+        html += (filteredDataBy_TimeType[d.properties.name] !== null
+            ? get(filteredDataBy_TimeType, d.properties.name, "Total deaths")
             : 0);
         html += "</span><br>";
         // Total damage
         html += "<span class=\"tooltip_key\">";
         html += "Total Damage: ";
         html += "<span class=\"tooltip_value\">";
-        html += (filteredData[d.properties.name] !== null
-            ? `$${valueFormatShort(get(filteredData,
+        html += (filteredDataBy_TimeType[d.properties.name] !== null
+            ? `$${valueFormatShort(get(filteredDataBy_TimeType,
                                        d.properties.name, "Total damage"))}`
             : 0);
         html += "</span><br>";
@@ -162,8 +172,8 @@ function main(worldVector, parsedData) {
         html += "<span class=\"tooltip_key\">";
         html += "Total Affected: ";
         html += "<span class=\"tooltip_value\">";
-        html += (filteredData[d.properties.name] !== null
-            ? get(filteredData, d.properties.name, "Total affected")
+        html += (filteredDataBy_TimeType[d.properties.name] !== null
+            ? get(filteredDataBy_TimeType, d.properties.name, "Total affected")
             : 0);
         html += "</span>";
         html += "</div>";
@@ -176,22 +186,13 @@ function main(worldVector, parsedData) {
           .style("left", `${d3.event.x + 15  }px`)
           .style("display", "block");
     });
-    map.on("mouseout", function (d) {
+    map.on("mouseout", function () {
         this.attr("fill-opacity", 1);
         d3.select("#tooltip-container").style("display", "none");
     });
-
-    d3.select("#legend-container")
-        .style("background", "linear-gradient(to left, rgb(255,0,0), rgb(255,225,225)")
-        .selectAll("text")
-        .data(["left","right"])
-        .enter()
-        .append("text")
-        .style("float", d => d)
-        .style("padding-top", "5px")
-        .text(d => d == "left" ? "Safe" : "Unsafe");
 }
 
+// read data files
 d3.json("/data/world-topo-min.json", (err, worldVector) =>
     d3.csv("data/disaster_data.csv")
       .get(parsedData => err

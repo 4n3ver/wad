@@ -84,7 +84,7 @@ class LineChart {
         this._observer = {};
         Object.freeze(this);    // prevent this object to be modified
 
-        this.updateGraph(linedata);
+        this.update(linedata);
     }
 
     /**

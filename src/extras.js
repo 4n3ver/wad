@@ -1,4 +1,12 @@
-/* @flow */
+/**
+ * Functions to append UI elements
+ *
+ * @author Felly Rusli (frusli6@gatech.edu)
+ * @author Marissa D'Souza (mdsouza8@gatech.edu)
+ * @version 0.0a
+ * @flow
+ */
+
 "use strict";
 
 import { select } from "d3";
@@ -9,7 +17,7 @@ import Chart from "chart.js";
  *
  * @returns {object!} time slider
  */
-export const initSlider = (target = "body") => {
+export const drawTimeSlider = (target = "body") => {
     select(target).append("div").attr("id", "slider")
                   .style("margin", "10px 100px 30px");
     const slider = document.getElementById("slider");
@@ -32,7 +40,7 @@ export const initSlider = (target = "body") => {
     return slider;
 };
 
-export const initDropDown = (target = "#main") => {
+export const drawDisasterTypeDropdown = (target = "#main") => {
     const dropdown = select(target)
         .append("div").attr("class", "ui right floated input")
         .append("select")
@@ -45,6 +53,19 @@ export const initDropDown = (target = "#main") => {
     dropdown.append("option").attr("value", "death")
             .text("Total Death");
     return dropdown;
+};
+
+export const drawChoroplethLegend = () => {
+    select("#legend-container")
+      .style("background",
+             "linear-gradient(to left, rgb(255,0,0), rgb(255,225,225)")
+      .selectAll("text")
+      .data(["left", "right"])
+      .enter()
+      .append("text")
+      .style("float", d => d)
+      .style("padding-top", "5px")
+      .text(d => d === "left" ? "Safe" : "Unsafe");
 };
 
 export const drawLineGraph = (lineData, startYear = 1960,
@@ -128,10 +149,11 @@ export const drawLineGraph = (lineData, startYear = 1960,
             }
         }
     );
-    line.updateGraph = function (lineData, startYear) {
+    line._update = line.update;
+    line.update = function (lineData, startYear) {
         line.data.datasets[0].data = lineData;
         line.data.labels = lineData.map((c, i) => startYear + i);
-        line.update(1000);
+        line._update(1000);
     };
     return line;
 };
