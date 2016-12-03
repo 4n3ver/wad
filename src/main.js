@@ -21,17 +21,17 @@ import {
 } from "./data";
 import { initDropDown, initSlider, drawLineGraph } from "./extras";
 
-const selectRed = (max, value) => Math.ceil(Math.sqrt(value / max) * 280);
+const selectRed = (max, value) => Math.ceil(Math.sqrt(value / max) * 225);
 
 const computeChoroplethHue = filteredData => {
     const max = maxRatio(filteredData);
     return function (d) {
         if (filteredData[d.properties.name]) {
             const ratio = filteredData[d.properties.name].averageRatio;
-            return `rgb(180, ${180 - selectRed(max, ratio)
-                }, ${180 - selectRed(max, ratio)})`;
+            return `rgb(255, ${225 - selectRed(max, ratio)
+                }, ${225 - selectRed(max, ratio)})`;
         } else {
-            return "#000";
+            return "#9E9E9E";
         }
     };
 };
@@ -63,6 +63,7 @@ function main(worldVector, parsedData) {
 
     bar.style("cursor", "pointer");
     map.style("cursor", "pointer");
+    map.style("fill", "rgb(255,225,225)");
 
     dropDown.on("input", function () {
         bar.style("fill", "rgba(0,0,0,0)");
@@ -179,6 +180,16 @@ function main(worldVector, parsedData) {
         this.attr("fill-opacity", 1);
         d3.select("#tooltip-container").style("display", "none");
     });
+
+    d3.select("#legend-container")
+        .style("background", "linear-gradient(to left, rgb(255,0,0), rgb(255,225,225)")
+        .selectAll("text")
+        .data(["left","right"])
+        .enter()
+        .append("text")
+        .style("float", d => d)
+        .style("padding-top", "5px")
+        .text(d => d == "left" ? "Safe" : "Unsafe");
 }
 
 d3.json("/data/world-topo-min.json", (err, worldVector) =>
