@@ -15,7 +15,7 @@
 require.context("../public/", true,
                 /^\.\/.*\.(html|css|csv|json|tsv|png|jpeg|jpg)/);
 
-import * as d3 from "d3";
+import { json, csv, select } from "d3";
 import { pickBy, mapValues } from "lodash";
 import WorldMap from "./map";
 import BarChart from "./bar";
@@ -145,7 +145,11 @@ function main(worldVector, parsedData) {
 
         updateAllGraph();
     });
-    map.on("mousemove", function (d) {
+    map.on("mousemove", function (d, event) {
+        if (!filteredDataBy_TimeType[d.properties.name]) {
+            return;
+        }
+
         let html = "";
         // Country name
         html += "<div class=\"tooltip_key\">";
@@ -178,23 +182,23 @@ function main(worldVector, parsedData) {
         html += "</span>";
         html += "</div>";
 
-        d3.select("#tooltip-container").html(html).style("opacity", 1);
+        select("#tooltip-container").html(html).style("opacity", 1);
         this.attr("fill-opacity", 0.75);
 
-        d3.select("#tooltip-container")
-          .style("top", `${d3.event.y + 15  }px`)
-          .style("left", `${d3.event.x + 15  }px`)
-          .style("display", "block");
+        select("#tooltip-container")
+            .style("top", `${event.y + 15  }px`)
+            .style("left", `${event.x + 15  }px`)
+            .style("display", "block");
     });
     map.on("mouseout", function () {
         this.attr("fill-opacity", 1);
-        d3.select("#tooltip-container").style("display", "none");
+        select("#tooltip-container").style("display", "none");
     });
 }
 
 // read data files
-d3.json("/data/world-topo-min.json", (err, worldVector) =>
-    d3.csv("data/disaster_data.csv")
-      .get(parsedData => err
-          ? console.error(err)
-          : main(worldVector, Object.freeze(processData(parsedData)))));
+json("/data/world-topo-min.json", (err, worldVector) =>
+    csv("data/disaster_data.csv")
+        .get(parsedData => err
+            ? console.error(err)
+            : main(worldVector, Object.freeze(processData(parsedData)))));
