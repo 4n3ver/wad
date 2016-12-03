@@ -71,7 +71,7 @@ export const drawChoroplethLegend = () => {
 export const drawLineGraph = (lineData, startYear = 1960,
                               target = "body") => {
     select(target).append("canvas")
-                  .attr("width", 1635)
+                  .attr("width", 1608)
                   .attr("height", 200)
                   .style("margin", "0 100px 0 auto")
                   .attr("id", "line-chart");
