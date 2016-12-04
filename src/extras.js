@@ -48,10 +48,10 @@ export const drawDisasterTypeDropdown = (target = "#main") => {
 
     dropdown.append("option").attr("value", "affected")
             .text("Number of People Affected");
-    dropdown.append("option").attr("value", "damage")
-            .text("Total Damage ($)");
     dropdown.append("option").attr("value", "death")
-            .text("Total Death");
+            .text("Number of Deaths");
+    dropdown.append("option").attr("value", "damage")
+                    .text("Total Damage ($)");
     return dropdown;
 };
 
@@ -107,7 +107,7 @@ export const drawLineGraph = (lineData, startYear = 1960,
             },
             options: {
                 maintainAspectRatio: false,
-                defaultFontFamily: Chart.defaults.global.defaultFontFamily = "'Droid Sans'",
+                defaultFontFamily: Chart.defaults.global.defaultFontFamily = "'Signika'",
                 responsive         : false,
                 scales             : {
                     yAxes: [
@@ -132,7 +132,7 @@ export const drawLineGraph = (lineData, startYear = 1960,
                         {
                             gridLines : {display: false},
                             scaleLabel: {
-                                fontSize   : 3,
+                                fontSize   : 15,
                                 fontFamily : "Droid Sans",
                                 labelString: "Year"
                             },

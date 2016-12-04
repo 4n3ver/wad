@@ -1,15 +1,18 @@
 body {
     background: #eceff1;
-    font-family: 'Droid Sans', sans-serif;
+    font-family: 'Signika', sans-serif;
     color: #494c4f;
 }
 
+h1 {
+    font-size: 18px;
+}
 
 text {
     fill: #494c4f;
-    font-family: 'Droid Sans', sans-serif;
+    font-family: 'Signika', sans-serif;
     color: #494c4f;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .domain {
@@ -36,7 +39,7 @@ text {
     padding: 0;
     text-align: right;
     color: #2d2a2b;
-    font-size: .75rem
+    font-size: 14px;
 }
 
 div.middle.aligned.center.aligned.one.column.grid {
@@ -48,7 +51,7 @@ div.middle.aligned.center.aligned.one.column.grid div.column {
 }
 
 div.noUi-marker.noUi-marker-horizontal.noUi-marker-large {
-    fill: #B0BEC5;
+    fill: #eceff1;
     height: 5px;
 }
 
@@ -58,7 +61,7 @@ div.noUi-value.noUi-value-horizontal.noUi-value-large {
 }
 
 div.noUi-connect {
-    background: #5e97f6;
+    background: #3c728c;
     border: none;
 }
 
@@ -73,7 +76,7 @@ div.noUi-horizontal div.noUi-handle {
     border: none;
     border-radius: 100%;
     left: -7px;
-    background: #5e97f6;
+    background: #3c728c;
     box-shadow: none;
 }
 
@@ -99,7 +102,7 @@ div.noUi-handle::after {
     position:relative;
     width: 66%;
     display: inline-block;
-    font-family: 'Droid Sans', sans-serif;
+    font-family: 'Signika', sans-serif;
     color: #494c4f;
 }
 
@@ -124,7 +127,7 @@ div.noUi-handle::after {
 #slider-container {
     width: 100%;
     display: block;
-    font-family: 'Droid Sans', sans-serif;
+    font-family: 'Signika', sans-serif;
     color: black;
 }
 
@@ -133,9 +136,10 @@ div.noUi-handle::after {
     position: absolute;
     top: 4%;
     display: block;
-    padding-left: 41%;
+    padding-left: 42%;
     color: #494c4f;
     font-weight: bolder;
+
 }
 
 #paragraph {
@@ -147,4 +151,8 @@ div.noUi-handle::after {
     z-index: 99999;
     display: inline-block;
     position:absolute;
+}
+
+hr.style1 {
+    border-top: 3px double #8c8b8b;
 }
