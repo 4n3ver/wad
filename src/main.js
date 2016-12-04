@@ -156,42 +156,42 @@ function main(worldVector, parsedData) {
         updateAllGraph();
     });
     map.on("mousemove", function (d, event) {
-        if (!filteredDataBy_TimeType[d.properties.name]) {
-            // TODO: DATA NOT AVAILABLE HERE
-            return;
-        }
-
         let html = "";
         // Country name
         html += "<div class=\"tooltip_key\">";
         html += d.properties.name;
         html += "</div>";
-        html += "<span class=\"tooltip_key\">";
-        html += "Total Deaths: ";
-        // Total deaths
-        html += "<span class=\"tooltip_value\">";
-        html += (filteredDataBy_TimeType[d.properties.name] !== null
-            ? get(filteredDataBy_TimeType, d.properties.name, "Total deaths")
-            : 0);
-        html += "</span><br>";
-        // Total damage
-        html += "<span class=\"tooltip_key\">";
-        html += "Total Damage: ";
-        html += "<span class=\"tooltip_value\">";
-        html += (filteredDataBy_TimeType[d.properties.name] !== null
-            ? `$${valueFormatShort(get(filteredDataBy_TimeType,
-                                       d.properties.name, "Total damage"))}`
-            : 0);
-        html += "</span><br>";
-        // Total affected
-        html += "<span class=\"tooltip_key\">";
-        html += "Total Affected: ";
-        html += "<span class=\"tooltip_value\">";
-        html += (filteredDataBy_TimeType[d.properties.name] !== null
-            ? get(filteredDataBy_TimeType, d.properties.name, "Total affected")
-            : 0);
-        html += "</span>";
-        html += "</div>";
+
+        if (!filteredDataBy_TimeType[d.properties.name]) { // grey countries
+            html += "<span class=\"tooltip_key\">No Data Available</span>";
+        } else {
+            html += "<span class=\"tooltip_key\">";
+            html += "Total Deaths: ";
+            // Total deaths
+            html += "<span class=\"tooltip_value\">";
+            html += (filteredDataBy_TimeType[d.properties.name] !== null
+                ? get(filteredDataBy_TimeType, d.properties.name, "Total deaths")
+                : 0);
+            html += "</span><br>";
+            // Total damage
+            html += "<span class=\"tooltip_key\">";
+            html += "Total Damage: ";
+            html += "<span class=\"tooltip_value\">";
+            html += (filteredDataBy_TimeType[d.properties.name] !== null
+                ? `$${valueFormatShort(get(filteredDataBy_TimeType,
+                                           d.properties.name, "Total damage"))}`
+                : 0);
+            html += "</span><br>";
+            // Total affected
+            html += "<span class=\"tooltip_key\">";
+            html += "Total Affected: ";
+            html += "<span class=\"tooltip_value\">";
+            html += (filteredDataBy_TimeType[d.properties.name] !== null
+                ? get(filteredDataBy_TimeType, d.properties.name, "Total affected")
+                : 0);
+            html += "</span>";
+            html += "</div>";
+        }
 
         select("#tooltip-container").html(html).style("opacity", 1);
         this.attr("fill-opacity", 0.75);
