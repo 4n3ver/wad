@@ -44,7 +44,7 @@ export const drawDisasterTypeDropdown = (target = "#main") => {
     const dropdown = select(target)
         .append("div").attr("class", "ui right floated input")
         .append("select")
-        .attr("class", "ui compact selection dropdown");
+        .attr("class", "ui compact selection dropdown")
 
     dropdown.append("option").attr("value", "affected")
             .text("Number of People Affected");

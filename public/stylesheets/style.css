@@ -6,7 +6,7 @@ body {
 
 
 text {
-    fill: #90A4AE;
+    fill: #494c4f;
     font-family: 'Droid Sans', sans-serif;
     color: #494c4f;
     font-size: 12px;
@@ -124,6 +124,8 @@ div.noUi-handle::after {
 #slider-container {
     width: 100%;
     display: block;
+    font-family: 'Droid Sans', sans-serif;
+    color: black;
 }
 
 #title {
@@ -133,9 +135,12 @@ div.noUi-handle::after {
     display: block;
     padding-left: 41%;
     color: #494c4f;
-    font-weight: bold;
+    font-weight: bolder;
 }
 
+#paragraph {
+    position: absolute;
+}
 #reset {
     top: 4.1%;
     margin-left: 9.3%;
