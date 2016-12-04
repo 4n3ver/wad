@@ -124,7 +124,8 @@ export const drawLineGraph = (lineData, startYear = 1960,
                                 maxTicksLimit: 5,
                                 maxRotation  : 0,
                                 padding: 1,
-                                fontColor: "#494c4f"
+                                fontColor: "#494c4f",
+                                fontSize: 14
                             }
                         }
                     ],
@@ -132,16 +133,17 @@ export const drawLineGraph = (lineData, startYear = 1960,
                         {
                             gridLines : {display: false},
                             scaleLabel: {
+                                display: true,
                                 fontSize   : 15,
-                                fontFamily : "Droid Sans",
-                                labelString: "Year"
+                                labelString: "Year",
                             },
                             ticks     : {
                                 autoSkip     : true,
                                 maxTicksLimit: 12,
                                 maxRotation  : 0,
                                 padding: 1,
-                                fontColor: "#494c4f"
+                                fontColor: "#494c4f",
+                                fontSize: 14,
                             }
                         }
                     ]
@@ -150,12 +152,14 @@ export const drawLineGraph = (lineData, startYear = 1960,
                 legend             : {display: false},
                 tooltips : {
                     enabled: true,
+                    titleFontSize: 14,
+                    bodyFontSize: 14,
                     displayColors: false,
                     callbacks: {
                         label: function(tooltipItem) {
                             // var datasetLabel = lineData.datasets[tooltipItem.datasetIndex].label;
                             var label = tooltipItem.yLabel;
-                            return "Total Occurrences: " + label;
+                            return "Occurrences: " + label;
                         }
                     }
                 }

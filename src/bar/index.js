@@ -25,7 +25,7 @@ const defaultOptions = {
     width : 600,
     height: 600,
     margin: {
-        top   : 30,
+        top   : 5,
         right : 125,
         bottom: 30,
         left  : 135
