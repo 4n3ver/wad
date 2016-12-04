@@ -107,6 +107,7 @@ export const drawLineGraph = (lineData, startYear = 1960,
             },
             options: {
                 maintainAspectRatio: false,
+                defaultFontFamily: Chart.defaults.global.defaultFontFamily = "'Droid Sans'",
                 responsive         : false,
                 scales             : {
                     yAxes: [
@@ -114,16 +115,16 @@ export const drawLineGraph = (lineData, startYear = 1960,
                             gridLines : {display: false},
                             scaleLabel: {
                                 display    : true,
-                                labelString: "frequency",
-                                fontSize   : 3,
-                                fontFamily : "Droid Sans"
+                                labelString: "Frequency",
+                                fontSize   : 15,
+                                // fontFamily : 'Droid Sans', sans-serif
                             },
                             ticks     : {
                                 autoSkip     : true,
                                 maxTicksLimit: 5,
                                 maxRotation  : 0,
                                 padding: 1,
-                                fontColor: "#B0BEC5"
+                                fontColor: "#494c4f"
                             }
                         }
                     ],
@@ -132,20 +133,32 @@ export const drawLineGraph = (lineData, startYear = 1960,
                             gridLines : {display: false},
                             scaleLabel: {
                                 fontSize   : 3,
-                                fontFamily : "Droid Sans"
+                                fontFamily : "Droid Sans",
+                                labelString: "Year"
                             },
                             ticks     : {
                                 autoSkip     : true,
                                 maxTicksLimit: 12,
                                 maxRotation  : 0,
                                 padding: 1,
-                                fontColor: "#B0BEC5"
+                                fontColor: "#494c4f"
                             }
                         }
                     ]
                 },
                 title              : {display: false},
-                legend             : {display: false}
+                legend             : {display: false},
+                tooltips : {
+                    enabled: true,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            // var datasetLabel = lineData.datasets[tooltipItem.datasetIndex].label;
+                            var label = tooltipItem.yLabel;
+                            return "Total Occurrences: " + label;
+                        }
+                    }
+                }
             }
         }
     );

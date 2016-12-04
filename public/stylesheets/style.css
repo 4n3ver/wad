@@ -1,18 +1,22 @@
 body {
     background: #eceff1;
     font-family: 'Droid Sans', sans-serif;
+    color: #494c4f;
 }
+
 
 text {
     fill: #90A4AE;
     font-family: 'Droid Sans', sans-serif;
-    color: #2d2a2b;
-    font-size: .75rem;
+    color: #494c4f;
+    font-size: 12px;
 }
 
 .domain {
     opacity: 0;
 }
+
+
 
 .tooltip_key {
     font-weight: bold;
@@ -83,17 +87,20 @@ div.noUi-handle::after {
 
 #tooltip-container {
     position: absolute;
-    background-color: #fff;
-    color: #333;
+    background-color: black;
+    color: white;
     padding: 10px;
-    border: 1px solid;
     display: none;
+    border-radius: 10px;
+    opacity: 0.5;
 }
 
 #map-container {
     position:relative;
     width: 66%;
     display: inline-block;
+    font-family: 'Droid Sans', sans-serif;
+    color: #494c4f;
 }
 
 #legend-container {
@@ -125,12 +132,13 @@ div.noUi-handle::after {
     top: 4%;
     display: block;
     padding-left: 41%;
-    color: #B0BEC5;
+    color: #494c4f;
+    font-weight: bold;
 }
 
 #reset {
-    top: 3.3%;
-    margin-left: 9%;
+    top: 4.1%;
+    margin-left: 9.3%;
     z-index: 99999;
     display: inline-block;
     position:absolute;

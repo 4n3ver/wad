@@ -148,7 +148,7 @@ function main(worldVector, parsedData) {
         country = data.properties.name;
         these.style("stroke", "none");
         this.style("stroke", "#424242")
-            .style("stroke-width", "2px");
+            .style("stroke-width", "1px");
 
         disasterType = null;
         bar.style("fill", "rgba(0,0,0,0)");
@@ -193,8 +193,8 @@ function main(worldVector, parsedData) {
             html += "</div>";
         }
 
-        select("#tooltip-container").html(html).style("opacity", 1);
-        this.attr("fill-opacity", 0.75);
+        select("#tooltip-container").html(html).style("opacity", 0.8);
+        this.attr("fill-opacity", 0.8);
 
         select("#tooltip-container")
             .style("top", `${event.y + 15  }px`)
