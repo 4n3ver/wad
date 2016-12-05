@@ -111,11 +111,11 @@ function main(worldVector, parsedData) {
     dropDown.on("input", function () {
         barVariable = this.value;
 
-        disasterType = null;
-        bar.style("fill", "rgba(0,0,0,0)");
-
-        country = null;
-        map.style("stroke", () => "none");
+        //disasterType = null;
+        //bar.style("fill", "rgba(0,0,0,0)");
+        //
+        //country = null;
+        //map.style("stroke", () => "none");
 
         updateAllGraph();
     });
