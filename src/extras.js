@@ -44,28 +44,30 @@ export const drawDisasterTypeDropdown = (target = "#main") => {
     const dropdown = select(target)
         .append("div").attr("class", "ui right floated input")
         .append("select")
-        .attr("class", "ui compact selection dropdown")
+        .attr("class", "ui compact selection dropdown");
 
     dropdown.append("option").attr("value", "affected")
             .text("Number of People Affected");
     dropdown.append("option").attr("value", "death")
             .text("Number of Deaths");
     dropdown.append("option").attr("value", "damage")
-                    .text("Total Damage ($)");
+            .text("Total Damage ($)");
+    dropdown.append("option").attr("value", "frequency")
+            .text("Frequency");
     return dropdown;
 };
 
 export const drawChoroplethLegend = () => {
     select("#legend-container")
-      .style("background",
-             "linear-gradient(to left, rgb(255,0,0), rgb(255,225,225)")
-      .selectAll("text")
-      .data(["left", "right"])
-      .enter()
-      .append("text")
-      .style("float", d => d)
-      .style("padding-top", "5px")
-      .text(d => d === "left" ? "Safe" : "Unsafe");
+        .style("background",
+               "linear-gradient(to left, rgb(255,0,0), rgb(255,225,225)")
+        .selectAll("text")
+        .data(["left", "right"])
+        .enter()
+        .append("text")
+        .style("float", d => d)
+        .style("padding-top", "5px")
+        .text(d => d === "left" ? "Safe" : "Unsafe");
 };
 
 export const drawLineGraph = (lineData, startYear = 1960,
@@ -107,7 +109,8 @@ export const drawLineGraph = (lineData, startYear = 1960,
             },
             options: {
                 maintainAspectRatio: false,
-                defaultFontFamily: Chart.defaults.global.defaultFontFamily = "'Signika'",
+                defaultFontFamily  : Chart.defaults.global.defaultFontFamily
+                    = "'Signika'",
                 responsive         : false,
                 scales             : {
                     yAxes: [
@@ -123,9 +126,9 @@ export const drawLineGraph = (lineData, startYear = 1960,
                                 autoSkip     : true,
                                 maxTicksLimit: 5,
                                 maxRotation  : 0,
-                                padding: 1,
-                                fontColor: "#494c4f",
-                                fontSize: 14
+                                padding      : 1,
+                                fontColor    : "#494c4f",
+                                fontSize     : 14
                             }
                         }
                     ],
@@ -133,7 +136,7 @@ export const drawLineGraph = (lineData, startYear = 1960,
                         {
                             gridLines : {display: false},
                             scaleLabel: {
-                                display: true,
+                                display    : true,
                                 fontSize   : 15,
                                 labelString: "Year",
                             },
@@ -141,23 +144,24 @@ export const drawLineGraph = (lineData, startYear = 1960,
                                 autoSkip     : true,
                                 maxTicksLimit: 12,
                                 maxRotation  : 0,
-                                padding: 1,
-                                fontColor: "#494c4f",
-                                fontSize: 14,
+                                padding      : 1,
+                                fontColor    : "#494c4f",
+                                fontSize     : 14,
                             }
                         }
                     ]
                 },
                 title              : {display: false},
                 legend             : {display: false},
-                tooltips : {
-                    enabled: true,
+                tooltips           : {
+                    enabled      : true,
                     titleFontSize: 14,
-                    bodyFontSize: 14,
+                    bodyFontSize : 14,
                     displayColors: false,
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            // var datasetLabel = lineData.datasets[tooltipItem.datasetIndex].label;
+                    callbacks    : {
+                        label: function (tooltipItem) {
+                            // var datasetLabel =
+                            // lineData.datasets[tooltipItem.datasetIndex].label;
                             var label = tooltipItem.yLabel;
                             return "Occurrences: " + label;
                         }

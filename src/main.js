@@ -132,8 +132,8 @@ function main(worldVector, parsedData) {
         these.style("fill", "rgba(0,0,0,0)");
         this.style("fill", "rgba(207,216,220,.3)");
 
-        country = null;
-        map.style("stroke", "none");
+        //country = null;
+        //map.style("stroke", "none");
 
         updateAllGraph();
     });
@@ -150,8 +150,8 @@ function main(worldVector, parsedData) {
         this.style("stroke", "#424242")
             .style("stroke-width", "1px");
 
-        disasterType = null;
-        bar.style("fill", "rgba(0,0,0,0)");
+        //disasterType = null;
+        //bar.style("fill", "rgba(0,0,0,0)");
 
         updateAllGraph();
     });

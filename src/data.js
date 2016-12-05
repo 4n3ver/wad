@@ -198,9 +198,10 @@ export const toBarData = data => {
         "Insect infestation", "Mass movement (dry)", "Storm", "Epidemic",
         "Wildfire", "Volcanic activity", "Animal accident", "Impact"
     ].forEach(type => set[type] = {
-        affected: 0,
-        damage  : 0,
-        death   : 0,
+        affected : 0,
+        damage   : 0,
+        death    : 0,
+        frequency: 0,
         type
     });
 
@@ -220,6 +221,7 @@ export const toBarData = data => {
             set[type].death += data["Total deaths"] !== "null"
                 ? parseInt(data["Total deaths"])
                 : 0;
+            set[type].frequency++;
             return set;
         }, set)
     );
