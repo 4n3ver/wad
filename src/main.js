@@ -19,7 +19,7 @@ import { json, csv, select } from "d3";
 import { pickBy, mapValues } from "lodash";
 import WorldMap from "./map";
 import BarChart from "./bar";
-import { valueFormatShort } from "./util";
+import { valueFormatShort, valuesOf } from "./util";
 import {
     processData,
     maxRatio,
@@ -86,6 +86,7 @@ function main(worldVector, parsedData) {
     const updateAllGraph = () => {
         filteredDataBy_TimeType = filterByDisasterType(disasterType)(
             filteredDataBy_Time);
+        valuesOf(filteredDataBy_TimeType).forEach(d => delete d.ratio);
         computeRatio(startYear, endYear)(filteredDataBy_TimeType);
         map.update(computeChoroplethHue(filteredDataBy_TimeType));
 

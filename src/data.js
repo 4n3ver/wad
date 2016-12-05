@@ -140,18 +140,15 @@ export const filter = pristineData =>
 const _computeRatioByYear = countryData => {
     Object.keys(countryData.disaster).forEach(disasterYear => {
         countryData.ratio = countryData.ratio || {};
-        const totalDeathPerYear = valuesOf(countryData.disaster[disasterYear])
-            .reduce((accumulator, disasterDataPerYear) => {
-                let toAdd;
-                if (`${parseInt(disasterDataPerYear["Affected"])}`
-                    !== "NaN") {
-                    toAdd = parseInt(disasterDataPerYear["Affected"]);
-                } else {
-                    toAdd = 0;
-                }
-                return accumulator + toAdd;
+        const totalAffectedPerYear = valuesOf(countryData.disaster[disasterYear])
+            .reduce((totalAffected, disasterDataPerYear) => {
+                const affected = parseInt(
+                    disasterDataPerYear["Total affected"]);
+                return !isNaN(affected)
+                    ? affected + totalAffected
+                    : totalAffected;
             }, 0);
-        countryData.ratio[disasterYear] = totalDeathPerYear
+        countryData.ratio[disasterYear] = totalAffectedPerYear
             / countryData.population[disasterYear];
     });
 };
