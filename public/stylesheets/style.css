@@ -145,9 +145,10 @@ div.noUi-handle::after {
 #paragraph {
     position: absolute;
 }
+
 #reset {
     top:3.7%;
-    margin-left: 9.3%;
+    margin-left: 8.5%;
     z-index: 99999;
     display: inline-block;
     position:absolute;
@@ -171,12 +172,7 @@ hr.style2 {
     left: 91%;
 }
 
-button#bar-help.help-pop {
-    top: 69%;
-    left: 72.8%;
-}
-
-button#dropdown-help.help-pop {
+#bar-container .help-pop {
     top: 10.5%;
     left: 88%;
 }
@@ -188,4 +184,10 @@ button#dropdown-help.help-pop {
 #slider-container .help-pop {
     top: 94%;
     left: 95%;
+}
+
+[data-tooltip].help-pop:after {
+    min-width: 15rem;
+    max-width: 50rem;
+    white-space: normal;
 }

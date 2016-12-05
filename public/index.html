@@ -10,13 +10,12 @@
   <title>What a Disaster!</title>
 </head>
 <body>
-
 <div class="ui middle aligned center aligned one column grid">
-  <div id="reset" class="ui compact inverted red circular icon button"
-      data-tooltip="Reset filter" data-position="right center" data-inverted="">
-    <i class="refresh icon"></i>
-  </div>
   <div class="column">
+    <div id="reset" class="ui compact inverted red circular icon button"
+        data-tooltip="Reset filter" data-position="right center" data-inverted="">
+      <i class="refresh icon"></i>
+    </div>
     <text id="title">Natural Disasters
       <hr class="style1">
     </text>
@@ -30,17 +29,13 @@
         </button>
         <div id="legend-container"></div>
       </div>
-      <button id="dropdown-help" class="circular ui compact basic icon button help-pop"
-          data-inverted="" data-position="top right"
-          data-tooltip="Use the dropdown to change the y-axis variable of the bar graph.">
-        <i class="help icon"></i>
-      </button>
-      <button id="bar-help" class="circular ui compact basic icon button help-pop"
-          data-inverted="" data-position="top right"
-          data-tooltip="Clicking on a specific disaster type in the bar graph will make the map view and line graphs only show data for that specific disaster type.">
-        <i class="help icon"></i>
-      </button>
       <div id="bar-container">
+        <button class="circular ui compact basic icon button help-pop"
+            data-inverted="" data-position="bottom right"
+            data-tooltip="Use the dropdown to change the y-axis variable of the bar graph.
+Clicking on a specific disaster type in the bar graph will make the map view and line graphs only show data for that specific disaster type.">
+          <i class="help icon"></i>
+        </button>
       </div>
       <br>
       <div id="line-container">
