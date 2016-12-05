@@ -143,9 +143,9 @@ const _computeRatioByYear = countryData => {
         const totalDeathPerYear = valuesOf(countryData.disaster[disasterYear])
             .reduce((accumulator, disasterDataPerYear) => {
                 let toAdd;
-                if (`${parseInt(disasterDataPerYear["Total deaths"])}`
+                if (`${parseInt(disasterDataPerYear["Affected"])}`
                     !== "NaN") {
-                    toAdd = parseInt(disasterDataPerYear["Total deaths"]);
+                    toAdd = parseInt(disasterDataPerYear["Affected"]);
                 } else {
                     toAdd = 0;
                 }
