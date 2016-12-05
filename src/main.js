@@ -170,7 +170,7 @@ function main(worldVector, parsedData) {
             // Total deaths
             html += "<span class=\"tooltip_value\">";
             html += (filteredDataBy_TimeType[d.properties.name] !== null
-                ? get(filteredDataBy_TimeType, d.properties.name, "Total deaths")
+                ? get(filteredDataBy_TimeType, d.properties.name, "Total deaths").toLocaleString()
                 : 0);
             html += "</span><br>";
             // Total damage
@@ -187,7 +187,7 @@ function main(worldVector, parsedData) {
             html += "Total Affected: ";
             html += "<span class=\"tooltip_value\">";
             html += (filteredDataBy_TimeType[d.properties.name] !== null
-                ? get(filteredDataBy_TimeType, d.properties.name, "Total affected")
+                ? get(filteredDataBy_TimeType, d.properties.name, "Total affected").toLocaleString()
                 : 0);
             html += "</span>";
             html += "</div>";
