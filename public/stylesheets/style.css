@@ -160,3 +160,32 @@ hr.style1 {
 hr.style2 {
     border-width: 2px;
 }
+
+.help-pop {
+    position: absolute;
+    z-index: 9999;
+}
+
+#map-container .help-pop {
+    top: 93.5%;
+    left: 91%;
+}
+
+button#bar-help.help-pop {
+    top: 69%;
+    left: 72.8%;
+}
+
+button#dropdown-help.help-pop {
+    top: 10.5%;
+    left: 88%;
+}
+
+#line-container .help-pop {
+    left: 5%;
+}
+
+#slider-container .help-pop {
+    top: 94%;
+    left: 95%;
+}
