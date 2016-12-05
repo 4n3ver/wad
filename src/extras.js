@@ -128,7 +128,8 @@ export const drawLineGraph = (lineData, startYear = 1960,
                                 maxRotation  : 0,
                                 padding      : 1,
                                 fontColor    : "#494c4f",
-                                fontSize     : 14
+                                fontSize     : 14,
+                                beginAtZero: true
                             }
                         }
                     ],
