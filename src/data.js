@@ -218,7 +218,7 @@ export const toBarData = data => {
             set[type].death += data["Total deaths"] !== "null"
                 ? parseInt(data["Total deaths"])
                 : 0;
-            set[type].frequency++;
+            set[type].frequency += parseInt(data.Occurrence);
             return set;
         }, set)
     );
@@ -233,7 +233,7 @@ export const toLineData = (data, start = 1960, end = 2015) => {
         if (!set[data.Year]) {
             set[data.Year] = 0;
         }
-        set[data.Year]++;
+        set[data.Year] += parseInt(data.Occurrence);
         return set;
     }, {});
     const result = [];
