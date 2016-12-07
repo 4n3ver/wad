@@ -14,6 +14,9 @@ Created for **CS4460: Information Visualization, FA16**, *Final Project*
 + Libraries installed:
     - D3.js v4.2.5
     - TopoJSON v1.6.27
+    - lodash v4.16.6
+    - Chart.js v2.4.0
+    - noUiSlider v9.0.0
 
 ## Notes
 + This project requires `npm` to build and run, to install `npm` please install <a href="https://nodejs.org/en/">`node.js`</a>
