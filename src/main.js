@@ -102,7 +102,6 @@ function main(worldVector, parsedData) {
         line.update(
             toLineData(filteredDataBy_TimeCountriesType, startYear, endYear),
             startYear);
-        console.log(startYear, endYear, disasterType, country, barVariable);
     };
 
     bar.style("cursor", "pointer");
@@ -111,12 +110,6 @@ function main(worldVector, parsedData) {
 
     dropDown.on("input", function () {
         barVariable = this.value;
-
-        //disasterType = null;
-        //bar.style("fill", "rgba(0,0,0,0)");
-        //
-        //country = null;
-        //map.style("stroke", () => "none");
 
         updateAllGraph();
     });
@@ -133,9 +126,6 @@ function main(worldVector, parsedData) {
         these.style("fill", "rgba(0,0,0,0)");
         this.style("fill", "rgba(207,216,220,.3)");
 
-        //country = null;
-        //map.style("stroke", "none");
-
         updateAllGraph();
     });
     bar.on("mouseenter", function () {
@@ -150,9 +140,6 @@ function main(worldVector, parsedData) {
         these.style("stroke", "none");
         this.style("stroke", "#424242")
             .style("stroke-width", "1px");
-
-        //disasterType = null;
-        //bar.style("fill", "rgba(0,0,0,0)");
 
         updateAllGraph();
     });
@@ -210,7 +197,7 @@ function main(worldVector, parsedData) {
 
 // read data files
 json("/data/world-topo-min.json", (err, worldVector) =>
-    csv("data/disaster_data.csv")
+    json("data/disaster_data.json")
         .get(parsedData => err
             ? console.error(err)
-            : main(worldVector, Object.freeze(processData(parsedData)))));
+            : main(worldVector, Object.freeze(parsedData))));
