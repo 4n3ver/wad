@@ -37,8 +37,8 @@ module.exports = [
                     }
                 },
                 {   // copy static (public) resources to build folder
-                    test   : /\.(html|css|csv|json|tsv|png|jpeg|jpg)$/,
-                    exclude: /(node_modules)/,
+                    test   : /\.(html|css|csv|js|json|tsv|png|jpeg|jpg)$/,
+                    exclude: /(node_modules|src)/,
                     loader :
                         `file-loader?name=[path][name].[ext]&context=${
                             path.resolve(__dirname, "public/")}`

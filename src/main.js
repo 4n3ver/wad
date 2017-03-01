@@ -13,7 +13,7 @@
 
 // tell webpack to copy static html and css to build folder
 require.context("../public/", true,
-                /^\.\/.*\.(html|css|csv|json|tsv|png|jpeg|jpg)/);
+                /^\.\/.*\.(html|css|csv|js|json|tsv|png|jpeg|jpg)/);
 
 import { json, csv, select } from "d3";
 import { pickBy, mapValues } from "lodash";
